@@ -1,13 +1,13 @@
 "use client";
 
-import { ChevronRight, ArrowRight, CreditCard, Printer, Smartphone, Baby, ShoppingBag, QrCode } from 'lucide-react';
+import { ChevronRight, ArrowRight, CreditCard, Printer, Smartphone, Baby, ShoppingBag, QrCode, Menu, X } from 'lucide-react';
 import { ServiceBentoGrid } from '@/components/ServiceBentoGrid';
 import { PanApplicationWorkflow } from '@/components/PanApplicationWorkflow';
 import { TrustAndAssurance } from '@/components/TrustAndAssurance';
 import { Footer } from '@/components/Footer';
 import { EPanApplicationModal } from '@/components/EPanApplicationModal';
 import { SERVICE_CATALOG } from "@/data/services";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -15,6 +15,25 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on escape key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMobileMenuOpen]);
 
   const secondaryActions = [
     { label: "PhonePe Agent", icon: QrCode },
@@ -63,7 +82,89 @@ export default function Home() {
               </Link>
             </div>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <div className="flex items-center gap-4 md:hidden">
+            <ThemeToggle />
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-[var(--text-primary)] hover:border-[var(--accent-blue)]/50 transition-all active:scale-95"
+              aria-label="Toggle Menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-0 z-40 md:hidden bg-[var(--bg-primary)] pt-24 px-6"
+            >
+              {/* Decorative Mesh in Menu */}
+              <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[80%] rounded-full bg-accent/10 blur-[100px]" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-secondary/10 blur-[80px]" />
+              </div>
+
+              <div className="flex flex-col gap-8 h-full">
+                <div className="flex flex-col gap-6">
+                  <span 
+                    onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        const servicesSection = document.getElementById('services');
+                        if (servicesSection) servicesSection.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="text-2xl font-black text-[var(--text-primary)] hover:text-[var(--accent-blue)] flex items-center justify-between group transition-colors cursor-pointer"
+                  >
+                    <span>পরিষেবাসমূহ</span>
+                    <ChevronRight size={24} className="opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  </span>
+
+                  <Link 
+                    href="/track" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-2xl font-black text-[var(--text-primary)] hover:text-[var(--accent-blue)] flex items-center justify-between group transition-colors"
+                  >
+                    <span>আবেদনের স্থিতি</span>
+                    <ChevronRight size={24} className="opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  </Link>
+
+                  <Link 
+                    href="/order-pvc" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-2xl font-black text-[var(--text-primary)] hover:text-[var(--accent-blue)] flex items-center justify-between group transition-colors"
+                  >
+                    <span>PVC Card Order</span>
+                    <ChevronRight size={24} className="opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  </Link>
+                </div>
+
+                <div className="mt-auto pb-12 space-y-6">
+                  <Link 
+                    href="/admin" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full py-5 rounded-2xl bg-[var(--text-primary)] text-[var(--bg-primary)] flex items-center justify-center gap-4 group shadow-2xl transition-all hover:bg-[var(--accent-blue)] ring-1 ring-white/10"
+                  >
+                    <span className="text-sm tracking-[0.2em] font-black uppercase">Nexus Command Portal</span>
+                    <div className="w-2 h-2 rounded-full bg-[var(--accent-green)] animate-pulse" />
+                  </Link>
+
+                  <div className="flex items-center justify-center gap-2 text-[var(--text-secondary)] opacity-40">
+                    <div className="w-1 h-1 rounded-full bg-current" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em]">Integrated Digital Infrastructure</span>
+                    <div className="w-1 h-1 rounded-full bg-current" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Hero Section */}
