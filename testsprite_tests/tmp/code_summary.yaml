@@ -1,0 +1,170 @@
+version: "2"
+type: frontend
+tech_stack:
+  - TypeScript
+  - Next.js 16
+  - React 19
+  - Tailwind CSS v4
+  - Framer Motion
+  - Zustand
+  - React Hook Form
+  - Zod
+  - GSAP
+  - Lucide React
+routes:
+  - path: /
+    file: src/app/page.tsx
+    auth_required: false
+    description: Homepage with hero section, service bento grid, PAN workflow, trust indicators, and footer
+  - path: /track
+    file: src/app/track/page.tsx
+    auth_required: false
+    description: Application status tracking page
+  - path: /admin
+    file: src/app/admin/page.tsx
+    auth_required: false
+    description: Nexus Command admin dashboard with service catalog, citizens, finances, fleet, logistics, AI, risk, workforce, marketplace sections
+  - path: /admin/services
+    file: src/app/admin/services
+    auth_required: false
+    description: Admin service management panel
+  - path: /admin/citizens
+    file: src/app/admin/citizens
+    auth_required: false
+    description: Admin citizens management panel
+  - path: /admin/finances
+    file: src/app/admin/finances
+    auth_required: false
+    description: Admin finances panel
+  - path: /admin/fleet
+    file: src/app/admin/fleet
+    auth_required: false
+    description: Admin fleet management panel
+  - path: /admin/logistics
+    file: src/app/admin/logistics
+    auth_required: false
+    description: Admin logistics panel
+  - path: /admin/marketplace
+    file: src/app/admin/marketplace
+    auth_required: false
+    description: Admin partner marketplace panel
+  - path: /admin/ai
+    file: src/app/admin/ai
+    auth_required: false
+    description: Admin AI panel
+  - path: /admin/risk
+    file: src/app/admin/risk
+    auth_required: false
+    description: Admin risk management panel
+  - path: /admin/workforce
+    file: src/app/admin/workforce
+    auth_required: false
+    description: Admin workforce panel
+  - path: /privacy
+    file: src/app/privacy
+    auth_required: false
+    description: Privacy policy page
+  - path: /terms
+    file: src/app/terms
+    auth_required: false
+    description: Terms of service page
+features:
+  - name: Homepage Hero
+    description: Main landing section with Bengali text, animated stats panel, and CTAs
+    files:
+      - src/app/page.tsx
+    entry_route: /
+    user_interactions:
+      - View hero heading and description
+      - Click "প্যান কার্ড আবেদন করুন" button to open PAN application modal
+      - Click "অ্যাপয়েন্টমেন্ট বুক করুন" button to open PAN application modal
+      - View quick stats panel with live badge
+    api_calls: []
+    auth_required: false
+  - name: Service Bento Grid
+    description: Grid display of available services with apply button
+    files:
+      - src/components/ServiceBentoGrid.tsx
+      - src/data/services.ts
+    entry_route: /
+    user_interactions:
+      - View service cards in bento grid layout
+      - Hover over service cards to see hover effects
+      - Click apply button on a service card
+    api_calls: []
+    auth_required: false
+  - name: PAN Application Modal
+    description: Modal form for submitting a PAN card application
+    files:
+      - src/components/PanApplicationModal.tsx
+    entry_route: /
+    user_interactions:
+      - Open modal via hero CTA or service card apply button
+      - Fill in application form fields
+      - Submit the form
+      - Close modal via close button or backdrop click
+    api_calls: []
+    auth_required: false
+  - name: Aadhaar Verification
+    description: Aadhaar card verification component
+    files:
+      - src/components/AadhaarVerification.tsx
+    entry_route: /
+    user_interactions:
+      - Enter Aadhaar number
+      - Submit for verification
+    api_calls: []
+    auth_required: false
+  - name: Application Status Tracking
+    description: Track status of submitted applications
+    files:
+      - src/app/track/page.tsx
+    entry_route: /track
+    user_interactions:
+      - Enter application/tracking ID
+      - Click track button
+      - View application status result
+    api_calls: []
+    auth_required: false
+  - name: Admin Dashboard (Nexus Command)
+    description: Admin panel with multiple management modules
+    files:
+      - src/app/admin/page.tsx
+      - src/app/admin/layout.tsx
+      - src/components/admin
+    entry_route: /admin
+    user_interactions:
+      - Navigate to admin dashboard via header link
+      - View sidebar navigation with modules
+      - Click on different admin sections (Services, Citizens, Finances, Fleet, Logistics, Marketplace, AI, Risk, Workforce)
+      - View stats and data tables in each section
+    api_calls: []
+    auth_required: false
+  - name: Navigation Header
+    description: Fixed top navigation header with links and admin access
+    files:
+      - src/app/page.tsx
+    entry_route: /
+    user_interactions:
+      - Click "পরিষেবাসমূহ" to scroll to services section
+      - Click "আবেদনের স্থিতি (Track Status)" to navigate to /track
+      - Click "Nexus Command" to navigate to /admin
+    api_calls: []
+    auth_required: false
+  - name: Footer
+    description: Site footer with links and information
+    files:
+      - src/components/Footer.tsx
+    entry_route: /
+    user_interactions:
+      - View footer sections
+      - Click footer links (Privacy, Terms)
+    api_calls: []
+    auth_required: false
+known_limitations:
+  - issue: Admin CRUD is UI-only, not connected to backend API
+    location: src/app/admin/page.tsx
+    impact: Create/update/delete only modify local state, not persisted
+  - issue: Application tracking is likely UI-only with mock data
+    location: src/app/track/page.tsx
+    impact: Tracking results may not reflect real application status

@@ -1,0 +1,1938 @@
+[
+  {
+    "id": "TC001",
+    "title": "Homepage hero renders Bengali heading/description and quick stats with live badge",
+    "description": "Verifies the Homepage Hero loads with the expected Bengali content and the quick stats panel including the live badge.",
+    "category": "Homepage Hero",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero heading\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero description\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Quick stats panel\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Live\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Open PAN application modal from primary CTA \"প্যান কার্ড আবেদন করুন\"",
+    "description": "Verifies clicking the primary CTA opens the PAN application modal from the homepage hero.",
+    "category": "Homepage Hero",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"PAN\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Open PAN application modal from secondary CTA \"অ্যাপয়েন্টমেন্ট বুক করুন\"",
+    "description": "Verifies clicking the appointment CTA opens the same PAN application modal.",
+    "category": "Homepage Hero",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"অ্যাপয়েন্টমেন্ট বুক করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"PAN\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Close PAN application modal using the modal close button",
+    "description": "Verifies the PAN application modal can be dismissed via its close control and is no longer visible.",
+    "category": "Homepage Hero",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"অ্যাপয়েন্টমেন্ট বুক করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Close\" button in the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Submit PAN application from hero modal and see confirmation",
+    "description": "Verifies completing the PAN application form in the modal and submitting shows a visible submission confirmation.",
+    "category": "Homepage Hero",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Applicant\" into \"Full name\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1995-01-15\" into \"Date of birth\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"9999999999\" into \"Mobile number\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"confirmation\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Attempt to submit PAN application with empty required fields shows validation",
+    "description": "Verifies submitting the PAN application modal without filling fields shows visible validation messages and does not show confirmation.",
+    "category": "Homepage Hero",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"confirmation\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Invalid mobile number format prevents submission and shows error",
+    "description": "Verifies entering an invalid mobile number shows a visible error and blocks successful submission confirmation.",
+    "category": "Homepage Hero",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Applicant\" into \"Full name\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1995-01-15\" into \"Date of birth\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"123\" into \"Mobile number\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"invalid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "PAN modal remains usable after open/close/open cycle from hero CTA",
+    "description": "Verifies the modal can be opened, closed, and opened again from the hero without losing basic UI functionality.",
+    "category": "Homepage Hero",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Close\" button in the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is not visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application modal\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Open PAN application modal from a service card in the bento grid",
+    "description": "Verifies a user can reach the PAN application modal by using the Apply button on a service card.",
+    "category": "Service Bento Grid",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the service bento grid section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"service bento grid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a service card with an Apply button\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply\" on a visible service card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"PAN\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application modal\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Successful PAN application submission from the modal (happy path)",
+    "description": "Verifies a user can open the modal, complete the form with valid inputs, submit, and see a visible confirmation.",
+    "category": "Service Bento Grid",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the service bento grid section"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply\" on a visible service card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Full Name\" with \"Test Citizen\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Mobile Number\" with \"9876543210\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Submit\" in the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"submission\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Invalid PAN application submission shows validation errors",
+    "description": "Verifies the PAN application form blocks submission and displays visible validation messages for invalid inputs.",
+    "category": "Service Bento Grid",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the service bento grid section"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply\" on a visible service card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Full Name\" with \"\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Mobile Number\" with \"abc\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Submit\" in the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Submitting with empty fields shows required-field errors",
+    "description": "Verifies submitting the modal with no inputs shows visible required-field validation messages.",
+    "category": "Service Bento Grid",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the service bento grid section"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply\" on a visible service card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Submit\" in the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application modal\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Switch focus within the modal and ensure inputs remain editable",
+    "description": "Verifies basic modal usability by moving between fields and confirming inputs accept text.",
+    "category": "Service Bento Grid",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the service bento grid section"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply\" on a visible service card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application modal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Full Name\" field in the modal"
+      },
+      {
+        "type": "action",
+        "description": "Type \"A\" into the \"Full Name\" field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"A\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Open PAN application modal from hero CTA and submit successfully, then close",
+    "description": "Verifies the PAN application modal opens from the homepage hero CTA, accepts valid inputs, shows a success confirmation, and can be closed via the close button.",
+    "category": "PAN Application Modal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"PAN\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Rahim Uddin\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"123412341234\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"rahim@example.com\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"success\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the modal close button"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Open PAN application modal from a service card Apply button and verify it appears",
+    "description": "Verifies the PAN application modal can be opened from a service card apply action on the homepage.",
+    "category": "PAN Application Modal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the services section"
+      },
+      {
+        "type": "action",
+        "description": "Click apply button on a service card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application\" modal is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Required-field validation errors appear when submitting empty PAN application form",
+    "description": "Verifies submitting the modal with required fields empty shows field-level validation errors.",
+    "category": "PAN Application Modal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application\" modal is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Correct validation errors and submit successfully from service card entry",
+    "description": "Verifies a user can trigger validation errors, then correct inputs and successfully submit to see a confirmation message.",
+    "category": "PAN Application Modal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the services section"
+      },
+      {
+        "type": "action",
+        "description": "Click apply button on a service card"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Karim Ali\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"987698769876\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"success\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Invalid Aadhaar format shows validation error and blocks success",
+    "description": "Verifies an invalid Aadhaar number produces a visible validation error and does not show a success confirmation until corrected.",
+    "category": "PAN Application Modal",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Mita Das\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"12AB\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"invalid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Close PAN application modal by clicking the backdrop",
+    "description": "Verifies the modal can be dismissed using a backdrop click and is no longer visible afterward.",
+    "category": "PAN Application Modal",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application\" modal is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the backdrop outside the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application\" modal is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Close PAN application modal via close button without submitting",
+    "description": "Verifies the user can open the modal and exit using the close button without submitting the form.",
+    "category": "PAN Application Modal",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application\" modal is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the modal close button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"PAN application\" modal is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Successful submission shows confirmation content within the modal",
+    "description": "Verifies that after a valid submission, a visible confirmation message is shown within the modal UI.",
+    "category": "PAN Application Modal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click \"প্যান কার্ড আবেদন করুন\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Sadia Khan\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"111122223333\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"01700000000\" into the phone/contact field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"confirmation\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"success\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Verify Aadhaar successfully with a valid 12-digit number",
+    "description": "Confirms the PAN application modal allows entering a valid Aadhaar number and shows a visible success indication after verification.",
+    "category": "Aadhaar Verification",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the PAN application button in the homepage hero/service section to open the PAN application modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"123412341234\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating Aadhaar verification success is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Show validation error for Aadhaar number that is too short",
+    "description": "Ensures the UI blocks verification and shows a visible validation message when Aadhaar length is less than 12 digits.",
+    "category": "Aadhaar Verification",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the PAN application button in the homepage hero/service section to open the PAN application modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"12345678901\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating an invalid Aadhaar number or required 12 digits is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Show validation error for Aadhaar number that is too long",
+    "description": "Ensures the UI shows a visible error when more than 12 digits are entered and verification is attempted.",
+    "category": "Aadhaar Verification",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the PAN application button in the homepage hero/service section to open the PAN application modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1234123412345\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating an invalid Aadhaar number or wrong length is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Show validation error for Aadhaar containing non-numeric characters",
+    "description": "Confirms the input is validated and a visible error is shown when letters/symbols are used in the Aadhaar field.",
+    "category": "Aadhaar Verification",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the PAN application button in the homepage hero/service section to open the PAN application modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1234ABCD1234\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating only digits are allowed or Aadhaar format is invalid is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Show required-field error when Aadhaar is empty and user clicks verify",
+    "description": "Validates that attempting verification with an empty Aadhaar field produces a visible required/empty error message.",
+    "category": "Aadhaar Verification",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the PAN application button in the homepage hero/service section to open the PAN application modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Press Tab"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating Aadhaar number is required is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Allow correcting an invalid Aadhaar and then verifying successfully",
+    "description": "Ensures a user can fix validation errors by updating the Aadhaar number and then see a success indication.",
+    "category": "Aadhaar Verification",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the PAN application button in the homepage hero/service section to open the PAN application modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Aadhaar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"12345\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating an invalid Aadhaar number is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"123412341234\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating Aadhaar verification success is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Aadhaar verification UI is available and actionable inside PAN modal",
+    "description": "Confirms the Aadhaar verification section renders in the PAN modal with an input and a verify/submit control visible.",
+    "category": "Aadhaar Verification",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the PAN application button in the homepage hero/service section to open the PAN application modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Aadhaar number\" field is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Verify\" or \"Submit\" button for Aadhaar verification is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"123412341234\" into the Aadhaar number field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Verify\" or \"Submit\" button for Aadhaar verification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating Aadhaar verification success is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Track application status with a valid tracking ID shows a result",
+    "description": "Verifies that entering a valid tracking ID and submitting displays an application status result on the tracking page.",
+    "category": "Application Status Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Track\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"VALID-TRACK-12345\" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"VALID-TRACK-12345\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Invalid or non-existent tracking ID shows not-found/no-results message",
+    "description": "Verifies that submitting an invalid tracking ID displays a visible error or no-results message.",
+    "category": "Application Status Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Track\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"NOT-A-REAL-ID-000\" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"not found\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Submitting with an empty tracking ID shows a required/validation message",
+    "description": "Verifies that the user cannot submit tracking without providing a tracking ID and sees a visible validation message.",
+    "category": "Application Status Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Track\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Whitespace-only tracking ID is rejected with a validation message",
+    "description": "Verifies that a tracking ID consisting only of spaces is not accepted and a visible validation message is shown.",
+    "category": "Application Status Tracking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Track\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"     \" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Tracking ID with leading/trailing spaces still returns result (trim behavior)",
+    "description": "Verifies that a valid tracking ID with extra leading/trailing spaces still produces a visible status result.",
+    "category": "Application Status Tracking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Track\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"  VALID-TRACK-12345  \" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"VALID-TRACK-12345\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Pressing Enter in the tracking ID field submits the form and shows result",
+    "description": "Verifies keyboard submission works by pressing Enter after entering a valid tracking ID.",
+    "category": "Application Status Tracking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Track\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"VALID-TRACK-12345\" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Press Enter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"VALID-TRACK-12345\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC035",
+    "title": "Second search replaces the previous result with the new result/error state",
+    "description": "Verifies that running a second tracking search updates the UI from the previous state to the new state.",
+    "category": "Application Status Tracking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "action",
+        "description": "Type \"VALID-TRACK-12345\" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"NOT-A-REAL-ID-000\" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"not found\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC036",
+    "title": "Long tracking ID input is handled without breaking the page",
+    "description": "Verifies the tracking page remains usable when a very long tracking ID is entered and submitted.",
+    "category": "Application Status Tracking",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Track\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"LONG-ID-1234567890-1234567890-1234567890-1234567890-1234567890\" into the tracking ID field"
+      },
+      {
+        "type": "action",
+        "description": "Click the track button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application status result\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC037",
+    "title": "Admin dashboard loads and shows sidebar modules",
+    "description": "Verifies the admin dashboard entry page renders and the sidebar navigation is visible with key modules.",
+    "category": "Admin Dashboard (Nexus Command)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/admin\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Nexus Command\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Sidebar navigation\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Services\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Citizens\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Finances\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Workforce\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC038",
+    "title": "Navigate from Admin to Services and verify services tables/stats are visible",
+    "description": "Verifies selecting Services from the sidebar opens the Services module and shows expected UI elements like stats and a data table.",
+    "category": "Admin Dashboard (Nexus Command)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/admin\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Services\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/services\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Services\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Services stats\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Services table\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC039",
+    "title": "Navigate from Services to Citizens and verify citizens table is visible",
+    "description": "Verifies switching modules using the sidebar updates the page to the Citizens module and renders a citizens data table.",
+    "category": "Admin Dashboard (Nexus Command)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/admin\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Services\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/services\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Citizens\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/citizens\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Citizens table\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC040",
+    "title": "Navigate through additional modules (Finances, Fleet, Logistics) from the sidebar",
+    "description": "Verifies key operational modules are accessible from the sidebar and each module page renders its main content area.",
+    "category": "Admin Dashboard (Nexus Command)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/admin\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Finances\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/finances\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Finances module content\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Fleet\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/fleet\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Fleet module content\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Logistics\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/logistics\""
+      }
+    ]
+  },
+  {
+    "id": "TC041",
+    "title": "Navigate through remaining modules (Marketplace, AI, Risk, Workforce) from the sidebar",
+    "description": "Verifies the remaining admin modules are reachable and each route loads with visible module content.",
+    "category": "Admin Dashboard (Nexus Command)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/admin\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Marketplace\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/marketplace\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Marketplace module content\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"AI\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/ai\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Risk\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/risk\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Workforce\" in the sidebar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin/workforce\""
+      }
+    ]
+  },
+  {
+    "id": "TC042",
+    "title": "Services module supports creating a service in the UI (local state)",
+    "description": "Verifies creating a service updates the visible services list within the same session (UI-only local state).",
+    "category": "Admin Dashboard (Nexus Command)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/admin/services\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Services\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Create\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Create service form\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Service Alpha\" into \"Service name\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Test Service Alpha\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC043",
+    "title": "Services module supports editing an existing service in the UI (local state)",
+    "description": "Verifies editing a service and saving updates the visible data in the services table within the same session.",
+    "category": "Admin Dashboard (Nexus Command)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/admin/services\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Services table\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Edit\" for the first service in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Edit service form\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \" - Updated\" into \"Service name\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Updated\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC044",
+    "title": "Header link 'পরিষেবাসমূহ' scrolls to Services section on homepage",
+    "description": "Verifies that clicking the Services link in the fixed header scrolls the homepage to the services section and shows the services bento grid.",
+    "category": "Navigation Header",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"পরিষেবাসমূহ\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click \"পরিষেবাসমূহ\" in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"পরিষেবাসমূহ\" is visible on the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"services\" bento grid is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC045",
+    "title": "Header link 'আবেদনের স্থিতি (Track Status)' navigates to /track",
+    "description": "Verifies that clicking the Track Status link in the header navigates to the tracking page and shows the tracking input.",
+    "category": "Navigation Header",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"আবেদনের স্থিতি (Track Status)\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click \"আবেদনের স্থিতি (Track Status)\" in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/track\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"application tracking\" input is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC046",
+    "title": "Header button 'Nexus Command' navigates to /admin dashboard",
+    "description": "Verifies that clicking the Nexus Command button in the header navigates to the admin dashboard and shows dashboard content.",
+    "category": "Navigation Header",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Nexus Command\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Nexus Command\" in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Nexus Command\" is visible on the page"
+      }
+    ]
+  },
+  {
+    "id": "TC047",
+    "title": "Header remains usable after scrolling and Services link still works",
+    "description": "Verifies the fixed header remains accessible after scrolling and the Services link still scrolls to the services section.",
+    "category": "Navigation Header",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the bottom of the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"পরিষেবাসমূহ\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click \"পরিষেবাসমূহ\" in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"services\" bento grid is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC048",
+    "title": "From /track, user can return to homepage and use Services header link",
+    "description": "Verifies navigation from tracking page back to homepage and that the Services header link scrolls correctly.",
+    "category": "Navigation Header",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /track"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/track\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"GaziOnline\" brand in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"পরিষেবাসমূহ\" in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"services\" bento grid is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC049",
+    "title": "From /admin, user can return to homepage via brand link",
+    "description": "Verifies that the header brand link returns the user from the admin dashboard to the homepage.",
+    "category": "Navigation Header",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /admin"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/admin\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Nexus Command\" is visible on the page"
+      },
+      {
+        "type": "action",
+        "description": "Click \"GaziOnline\" brand in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"পরিষেবাসমূহ\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC050",
+    "title": "Services link does not navigate away from homepage (stays on /)",
+    "description": "Verifies that clicking the Services header link performs in-page navigation and does not change to a different route.",
+    "category": "Navigation Header",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"পরিষেবাসমূহ\" in the header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"services\" bento grid is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC051",
+    "title": "Footer renders with key sections on the homepage",
+    "description": "Verifies the homepage footer is visible after scrolling and shows its main sections/links.",
+    "category": "Footer",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the footer section at the bottom of the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Footer\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Privacy\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Terms\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC052",
+    "title": "Footer Privacy link navigates to Privacy Policy page",
+    "description": "Verifies clicking the Privacy link in the footer navigates to /privacy and shows policy content.",
+    "category": "Footer",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the footer section at the bottom of the page"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Privacy\" in the footer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/privacy\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Privacy\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Privacy policy\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC053",
+    "title": "Footer Terms link navigates to Terms of Service page",
+    "description": "Verifies clicking the Terms link in the footer navigates to /terms and shows terms content.",
+    "category": "Footer",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the footer section at the bottom of the page"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Terms\" in the footer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/terms\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Terms\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Terms of service\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC054",
+    "title": "Privacy Policy page is reachable directly and shows content",
+    "description": "Verifies the /privacy route loads and displays privacy policy content.",
+    "category": "Footer",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /privacy"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/privacy\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Privacy\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Privacy policy\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Terms\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC055",
+    "title": "Terms of Service page is reachable directly and shows content",
+    "description": "Verifies the /terms route loads and displays terms content.",
+    "category": "Footer",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /terms"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/terms\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Terms\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Terms of service\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Privacy\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC056",
+    "title": "Footer links remain usable after navigating away and returning to homepage",
+    "description": "Verifies footer links work consistently after visiting a legal page and returning to the homepage.",
+    "category": "Footer",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the footer section at the bottom of the page"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Privacy\" in the footer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/privacy\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Home\" (site logo or homepage link) to return to the homepage"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the footer section at the bottom of the page"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Terms\" in the footer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/terms\""
+      }
+    ]
+  }
+]

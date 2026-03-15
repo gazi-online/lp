@@ -1,65 +1,236 @@
-import Image from "next/image";
+"use client";
+
+import { ChevronRight, ArrowRight, CreditCard, Printer, Smartphone, Baby, ShoppingBag, QrCode } from 'lucide-react';
+import { ServiceBentoGrid } from '@/components/ServiceBentoGrid';
+import { PanApplicationWorkflow } from '@/components/PanApplicationWorkflow';
+import { TrustAndAssurance } from '@/components/TrustAndAssurance';
+import { Footer } from '@/components/Footer';
+import { EPanApplicationModal } from '@/components/EPanApplicationModal';
+import { SERVICE_CATALOG } from "@/data/services";
+import { useState } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const secondaryActions = [
+    { label: "PhonePe Agent", icon: QrCode },
+    { label: "Photo / Document Print", icon: Printer },
+    { label: "Aadhar Mobile Link", icon: Smartphone },
+    { label: "Child Aadhar Slot", icon: Baby },
+    { label: "Products Page", icon: ShoppingBag },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-transparent">
+      {/* Background Gradient Mesh */}
+      <div className="fixed inset-0 -z-10 bg-[var(--bg-primary)] selection:bg-accent/30 transition-colors duration-400">
+        <div className="absolute top-0 inset-0 bg-transparent" />
+        <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-secondary/5 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-accent/5 blur-[100px]" />
+      </div>
+
+      {/* Header Container */}
+      <header className="fixed top-0 w-full z-50 glass-panel border-b border-[var(--border-subtle)] transition-all duration-400">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-10 h-10 group">
+              <div className="absolute inset-0 bg-[var(--accent-blue)] rounded-xl blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
+              <Image 
+                src="/logo.png" 
+                alt="Gazi Online Logo" 
+                width={40} 
+                height={40} 
+                className="relative z-10 rounded-xl"
+              />
+            </div>
+            <div className="text-xl font-bold text-[var(--text-primary)] tracking-widest drop-shadow-sm transition-colors">
+              GAZI<span className="text-[var(--accent-blue)]">ONLINE</span>
+            </div>
+          </div>
+          <nav className="hidden md:flex gap-6 text-[var(--text-primary)] text-sm font-black drop-shadow-sm items-center transition-colors">
+            <span className="hover:text-[var(--accent-blue)] hover-text-glow cursor-pointer transition-colors">পরিষেবাসমূহ</span>
+            <Link href="/track" className="hover:text-[var(--accent-blue)] hover-text-glow transition-colors">আবেদনের স্থিতি (Track Status)</Link>
+            
+            <div className="flex items-center gap-4 ml-4">
+              <ThemeToggle />
+              <Link href="/admin" className="px-5 py-2.5 rounded-xl bg-[var(--text-primary)] text-[var(--bg-primary)] hover:bg-[var(--accent-blue)] transition-all flex items-center gap-2 group shadow-xl">
+                 <span className="text-[10px] tracking-widest uppercase font-black">Nexus Command</span>
+                 <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] group-hover:animate-pulse" />
+              </Link>
+            </div>
+          </nav>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </header>
+
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 pt-48 pb-32 min-h-screen flex flex-col justify-center relative z-10">
+        <div className="grid md:grid-cols-12 gap-12 items-center">
+          
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="md:col-span-12 lg:col-span-7 space-y-10"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <h1 className="text-hero font-black leading-tight drop-shadow-sm text-[var(--text-primary)] transition-colors">
+              আপনার ডিজিটাল জীবন,{' '}
+              <span
+                className="bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)] bg-clip-text text-transparent"
+              >
+                সহজ করা
+              </span>
+            </h1>
+            
+            <p className="text-body text-[var(--text-secondary)] font-semibold max-w-xl transition-colors">
+              গাজী অনলাইন সবার জন্য ব্যাংকিং, সরকারি আইডি পরিষেবা এবং ইউটিলিটিগুলোতে সহজে অ্যাক্সেস প্রদান করে। অ্যাপলের মতো সহজ ব্যবহার এবং স্ট্রাইপের মতো নির্ভরযোগ্য নিরাপত্তা।
+            </p>
+ 
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-6">
+                <Link 
+                  href="/order-pvc"
+                  className="group relative bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)] text-white font-black px-10 py-5 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,102,255,0.3)] transition-all hover-scale-bounce ring-1 ring-white/20"
+                >
+                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="relative z-10 flex items-center gap-3 text-lg tracking-widest uppercase">
+                    PVC Card Order <CreditCard size={22} className="group-hover:rotate-12 transition-transform" />
+                  </span>
+                </Link>
+                
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="glass-panel text-[var(--btn-secondary-text)] font-black px-10 py-5 rounded-2xl hover:bg-[var(--btn-secondary-bg)] border-[var(--border-subtle)] hover:border-[var(--border-strong)] shadow-xl hover-scale-bounce transition-all"
+                >
+                  অ্যাপয়েন্টমেন্ট বুক করুন
+                </button>
+              </div>
+
+              {/* Secondary Quick Actions Grid */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 pt-8"
+              >
+                {secondaryActions.map((action, i) => (
+                  <MagneticButton key={i} action={action} />
+                ))}
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Quick Stats Panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="md:col-span-5 hidden md:block"
           >
-            Documentation
-          </a>
+            <div className="relative p-8 rounded-[2.5rem] space-y-6 overflow-hidden bg-[var(--card-bg)] backdrop-blur-[60px] border border-[var(--card-border)] shadow-[var(--shadow-md)] ring-1 ring-inset ring-[var(--border-subtle)] hover-glow-card transition-all">
+              {/* Header */}
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-[var(--text-secondary)] bg-[var(--btn-secondary-bg)] px-3 py-1.5 rounded-full ring-1 ring-[var(--card-border)]">Quick Stats</span>
+                <span className="flex items-center gap-2 text-[10px] font-black text-[var(--accent-green)] bg-[var(--accent-green)]/10 px-3 py-1.5 rounded-full ring-1 ring-[var(--accent-green)]/20">
+                  <span className="w-2 h-2 bg-[var(--accent-green)] rounded-full animate-pulse" /> LIVE
+                </span>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="group bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)] p-5 rounded-2xl cursor-default transition-all">
+                   <div className="text-4xl font-black text-white mb-1 tracking-tighter group-hover:scale-105 transition-transform origin-left">123+</div>
+                   <div className="text-[10px] font-black text-white/70 uppercase tracking-widest leading-tight">আবেদন আজকে<br/>প্রক্রিয়াধীন</div>
+                </div>
+                <div className="group bg-[var(--bg-secondary)] p-5 rounded-2xl ring-1 ring-[var(--border-subtle)] cursor-default transition-all">
+                   <div className="text-4xl font-black text-[var(--text-primary)] mb-1 tracking-tighter group-hover:scale-105 transition-transform origin-left">3-Day</div>
+                   <div className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest leading-tight">Delivery<br/>Guarantee on PAN</div>
+                </div>
+                <div className="group col-span-2 bg-gradient-to-r from-[var(--accent-saffron)] to-[var(--accent-red)] p-5 rounded-2xl cursor-default transition-all">
+                   <div className="text-4xl font-black text-white mb-1 tracking-tighter group-hover:scale-105 transition-transform origin-left">১২,৪৫০+</div>
+                   <div className="text-[10px] font-black text-white/70 uppercase tracking-widest">সফল লেনদেন সম্পন্ন</div>
+                </div>
+              </div>
+
+              {/* Service Badges */}
+              <div className="flex flex-wrap gap-3 pt-6 border-t border-white/5 transition-colors">
+                {SERVICE_CATALOG.slice(0, 5).map((service) => (
+                  <motion.span 
+                    key={service.id} 
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    className="text-[9px] font-black text-[var(--text-secondary)] bg-white/5 px-4 py-2 rounded-full border border-white/5 uppercase tracking-[0.15em] transition-all hover:text-[var(--accent-blue)] hover:border-[var(--accent-blue)]/30 hover:shadow-[0_0_15px_rgba(0,209,255,0.2)] cursor-default liquid-glass-button"
+                  >
+                    {service.name}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+          
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Service Bento Grid Section */}
+      <ServiceBentoGrid onApply={() => setIsModalOpen(true)} />
+
+      {/* PAN Application Workflow Section */}
+      <PanApplicationWorkflow />
+
+      {/* Trust & Assurance Section */}
+      <TrustAndAssurance />
+
+      {/* Footer Section */}
+      <Footer />
+
+      {/* e-PAN Application Modal */}
+      <EPanApplicationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </main>
+  );
+}
+
+function MagneticButton({ action }: { action: any }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springConfig = { damping: 20, stiffness: 200 };
+  const dx = useSpring(x, springConfig);
+  const dy = useSpring(y, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set((e.clientX - centerX) * 0.4);
+    y.set((e.clientY - centerY) * 0.4);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.button
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      whileHover={{ y: -8 }}
+      whileTap={{ scale: 0.95 }}
+      className="flex flex-col items-center gap-5 p-6 rounded-[2.5rem] bg-white/[0.03] border border-white/5 hover:border-[var(--accent-blue)]/50 hover:bg-white/[0.08] transition-all group liquid-glass-button shadow-2xl relative overflow-hidden"
+    >
+      <motion.div 
+        style={{ x: dx, y: dy }}
+        className="p-5 rounded-3xl bg-[var(--accent-blue)]/10 group-hover:bg-[var(--accent-blue)] transition-all duration-500 shadow-inner group-hover:shadow-[0_0_25px_rgba(0,209,255,0.4)] relative z-10"
+      >
+        <action.icon className="w-8 h-8 text-[var(--accent-blue)] group-hover:text-white transition-all duration-500 group-hover:scale-110" />
+      </motion.div>
+      <span className="relative z-10 text-xs sm:text-sm font-black text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] uppercase tracking-[0.15em] text-center leading-tight">
+        {action.label}
+      </span>
+      
+      {/* Radiant Glow Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent-blue)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    </motion.button>
   );
 }

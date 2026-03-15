@@ -1,0 +1,17 @@
+{
+  "status": "init",
+  "scope": "codebase",
+  "type": "frontend",
+  "localEndpoint": "http://localhost:3000/",
+  "serverPort": 41836,
+  "executionArgs": {
+    "projectName": "update-php",
+    "projectPath": "d:\\projects\\update-php",
+    "testIds": [],
+    "additionalInstruction": "",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-giDQwJxeRUCcG3Pn64Vh0GcDAxGk_oI7HJK07RoyP2UTO2CdzGrsqz9OTnIBxTD7DaoO3MhF-t9e340IFtj-kVuwF7BtBt-oSZRblFfkdMqQzOREm9tiHEB3Mj-sWVh9DZE"
+    }
+  }
+}
