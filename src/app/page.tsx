@@ -5,16 +5,16 @@ import { ServiceBentoGrid } from '@/components/ServiceBentoGrid';
 import { PanApplicationWorkflow } from '@/components/PanApplicationWorkflow';
 import { TrustAndAssurance } from '@/components/TrustAndAssurance';
 import { Footer } from '@/components/Footer';
-import { EPanApplicationModal } from '@/components/EPanApplicationModal';
 import { SERVICE_CATALOG } from "@/data/services";
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Close mobile menu on escape key
@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-transparent">
       {/* Background Gradient Mesh */}
-      <div className="fixed inset-0 -z-10 bg-[var(--bg-primary)] selection:bg-accent/30 transition-colors duration-400">
+      <div className="fixed inset-0 -z-10 bg-transparent selection:bg-accent/30 transition-colors duration-400">
         <div className="absolute top-0 inset-0 bg-transparent" />
         <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-secondary/5 blur-[120px] animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-accent/5 blur-[100px]" />
@@ -54,7 +54,7 @@ export default function Home() {
 
       {/* Header Container */}
       <header className="fixed top-0 w-full z-50 glass-panel border-b border-[var(--border-subtle)] transition-all duration-400">
-        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between relative z-50">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 group">
               <div className="absolute inset-0 bg-[var(--accent-blue)] rounded-xl blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
@@ -77,7 +77,7 @@ export default function Home() {
             <div className="flex items-center gap-4 ml-4">
               <ThemeToggle />
               <Link href="/admin" className="px-5 py-2.5 rounded-xl bg-[var(--text-primary)] text-[var(--bg-primary)] hover:bg-[var(--accent-blue)] transition-all flex items-center gap-2 group shadow-xl">
-                 <span className="text-[10px] tracking-widest uppercase font-black">Nexus Command</span>
+                 <span className="text-[10px] tracking-widest uppercase font-black">Admin Login</span>
                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] group-hover:animate-pulse" />
               </Link>
             </div>
@@ -151,15 +151,10 @@ export default function Home() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="w-full py-5 rounded-2xl bg-[var(--text-primary)] text-[var(--bg-primary)] flex items-center justify-center gap-4 group shadow-2xl transition-all hover:bg-[var(--accent-blue)] ring-1 ring-white/10"
                   >
-                    <span className="text-sm tracking-[0.2em] font-black uppercase">Nexus Command Portal</span>
+                    <span className="text-sm tracking-[0.2em] font-black uppercase">Admin Login</span>
                     <div className="w-2 h-2 rounded-full bg-[var(--accent-green)] animate-pulse" />
                   </Link>
 
-                  <div className="flex items-center justify-center gap-2 text-[var(--text-secondary)] opacity-40">
-                    <div className="w-1 h-1 rounded-full bg-current" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em]">Integrated Digital Infrastructure</span>
-                    <div className="w-1 h-1 rounded-full bg-current" />
-                  </div>
                 </div>
               </div>
             </motion.div>
@@ -201,12 +196,12 @@ export default function Home() {
                   </span>
                 </Link>
                 
-                <button 
-                  onClick={() => setIsModalOpen(true)}
-                  className="glass-panel text-[var(--btn-secondary-text)] font-black px-10 py-5 rounded-2xl hover:bg-[var(--btn-secondary-bg)] border-[var(--border-subtle)] hover:border-[var(--border-strong)] shadow-xl hover-scale-bounce transition-all"
+                <Link
+                  href="/book-appointment"
+                  className="glass-panel text-[var(--btn-secondary-text)] font-black px-10 py-5 rounded-2xl hover:bg-[var(--btn-secondary-bg)] border-[var(--border-subtle)] hover:border-[var(--border-strong)] shadow-xl hover-scale-bounce transition-all inline-block"
                 >
                   অ্যাপয়েন্টমেন্ট বুক করুন
-                </button>
+                </Link>
               </div>
 
               {/* Secondary Quick Actions Grid */}
@@ -274,7 +269,7 @@ export default function Home() {
       </section>
 
       {/* Service Bento Grid Section */}
-      <ServiceBentoGrid onApply={() => setIsModalOpen(true)} />
+      <ServiceBentoGrid onApply={() => router.push('/book-appointment')} />
 
       {/* PAN Application Workflow Section */}
       <PanApplicationWorkflow />
@@ -284,9 +279,6 @@ export default function Home() {
 
       {/* Footer Section */}
       <Footer />
-
-      {/* e-PAN Application Modal */}
-      <EPanApplicationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </main>
   );
 }

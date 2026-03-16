@@ -70,15 +70,15 @@
 }
 
 .chandra {
-  --bg-primary: #00011A;
-  --bg-secondary: #05081A;
-  --bg-tertiary: #0A0F2E;
-  --surface-glass: rgba(10, 15, 30, 0.6);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
-  --text-primary: #FFFFFF;
-  --text-secondary: #94A3B8;
-  --text-tertiary: #64748B;
+  --bg-primary: #121212;
+  --bg-secondary: #1A1A1A;
+  --bg-tertiary: #242424;
+  --surface-glass: rgba(18, 18, 18, 0.6);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-strong: rgba(255, 255, 255, 0.1);
+  --text-primary: #F2F2F2;
+  --text-secondary: #A0A0A0;
+  --text-tertiary: #707070;
   --accent-saffron: #FF6B00;
   --accent-blue: #00D1FF;
   --accent-green: #00FF94;
@@ -86,30 +86,30 @@
   --accent-red: #FF4D4D;
 
   /* Liquid Glass Tokens - Dark */
-  --liquid-glass-bg: rgba(10, 15, 30, 0.4);
-  --liquid-glass-border: rgba(255, 255, 255, 0.1);
-  --liquid-glass-highlight: rgba(255, 255, 255, 0.05);
-  --liquid-glass-glow: rgba(0, 209, 255, 0.2);
-  --liquid-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --liquid-glass-bg: rgba(18, 18, 18, 0.4);
+  --liquid-glass-border: rgba(255, 255, 255, 0.08);
+  --liquid-glass-highlight: rgba(255, 255, 255, 0.03);
+  --liquid-glass-glow: rgba(0, 209, 255, 0.15);
+  --liquid-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 
   /* Button & Container Specific */
-  --btn-primary-bg: #FFFFFF;
-  --btn-primary-text: #00011A;
+  --btn-primary-bg: #F2F2F2;
+  --btn-primary-text: #121212;
   --btn-secondary-bg: rgba(255, 255, 255, 0.05);
-  --btn-secondary-text: #FFFFFF;
-  --card-bg: rgba(255, 255, 255, 0.02);
-  --card-border: rgba(255, 255, 255, 0.08);
+  --btn-secondary-text: #F2F2F2;
+  --card-bg: rgba(255, 255, 255, 0.01);
+  --card-border: rgba(255, 255, 255, 0.05);
 
   /* Admin Specific - Cyber Military Aesthetic */
-  --admin-bg: #00011A;
-  --admin-card: rgba(10, 15, 30, 0.5);
-  --admin-border: rgba(0, 209, 255, 0.15);
+  --admin-bg: #121212;
+  --admin-card: rgba(26, 26, 26, 0.5);
+  --admin-border: rgba(0, 209, 255, 0.1);
   --admin-accent: #00FF94;
-  --admin-sidebar: #00011A;
+  --admin-sidebar: #121212;
   
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 30px rgba(0, 209, 255, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.9);
+  --shadow-glow: 0 0 30px rgba(0, 209, 255, 0.2);
 
   --gradient-dominant: linear-gradient(135deg, #00011A 0%, #0A0F2E 100%);
   --gradient-accent: linear-gradient(135deg, #00011A 0%, #00D1FF 100%);
@@ -130,7 +130,7 @@ html {
 }
 
 body {
-  background: var(--bg-primary);
+  background: transparent;
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;

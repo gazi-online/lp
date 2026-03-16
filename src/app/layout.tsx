@@ -72,6 +72,7 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from '@/context/ThemeContext';
+import BubbleBackground from '@/components/BubbleBackground';
 
 export default function RootLayout({
   children,
@@ -127,9 +128,10 @@ export default function RootLayout({
       </head>
       <body
         className={`${inter.variable} ${notoSansBengali.variable} ${notoSerifBengali.variable} antialiased font-sans transition-colors duration-400`}
-        style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+        style={{ backgroundColor: 'transparent', color: 'var(--text-primary)' }}
       >
         <ThemeProvider>
+          <BubbleBackground />
           {children}
         </ThemeProvider>
       </body>

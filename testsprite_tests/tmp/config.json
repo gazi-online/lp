@@ -3,7 +3,7 @@
   "scope": "codebase",
   "type": "frontend",
   "localEndpoint": "http://localhost:3000/",
-  "serverPort": 41836,
+  "serverPort": 22173,
   "executionArgs": {
     "projectName": "update-php",
     "projectPath": "d:\\projects\\update-php",

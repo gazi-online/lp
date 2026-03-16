@@ -94,19 +94,20 @@ export default function TrackPage() {
               value={trackingId}
               onChange={(e) => setTrackingId(e.target.value)}
               placeholder="ট্র্যাকিং আইডি লিখুন (e.g. GZ-12345)"
-              className={`w-full bg-white/5 border border-white/10 rounded-2xl md:rounded-full transition-all duration-700 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 font-black liquid-glass-button ${result ? 'px-6 py-4 text-base' : 'px-8 py-7 text-xl'}`}
+              className={`w-full bg-white/5 border border-white/10 rounded-2xl md:rounded-full transition-all duration-700 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 font-black liquid-glass-button ${result ? 'pl-4 sm:pl-6 pr-[100px] sm:pr-[120px] py-4 text-sm sm:text-base' : 'pl-6 sm:pl-8 pr-[110px] sm:pr-[140px] py-5 sm:py-7 text-base sm:text-xl'}`}
             />
             <button 
               type="submit"
               disabled={isSearching}
-              className={`absolute right-2 top-2 bottom-2 bg-[var(--accent-blue)] text-white font-black rounded-xl md:rounded-full transition-all flex items-center gap-2 disabled:opacity-50 shadow-[0_10px_20px_-5px_rgba(0,209,255,0.4)] active:scale-95 group/btn ${result ? 'px-6 text-xs' : 'px-10 text-sm'}`}
+              className={`absolute right-2 top-2 bottom-2 bg-[var(--accent-blue)] text-white font-black rounded-xl md:rounded-full transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_10px_20px_-5px_rgba(0,209,255,0.4)] active:scale-95 group/btn ${result ? 'w-[84px] sm:w-auto sm:px-6 text-[10px] sm:text-xs' : 'w-[94px] sm:w-auto sm:px-10 text-[11px] sm:text-sm'}`}
             >
               {isSearching ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <Search size={result ? 18 : 22} className="group-hover/btn:scale-110 transition-transform" />
-                  <span className="uppercase tracking-widest">{result ? "Update" : "খুঁজুন"}</span>
+                  <Search size={result ? 16 : 20} className="group-hover/btn:scale-110 transition-transform shrink-0" />
+                  <span className="uppercase tracking-widest hidden sm:inline-block">{result ? "Update" : "খুঁজুন"}</span>
+                  <span className="uppercase tracking-widest sm:hidden">{result ? "Upd" : "খুঁজুন"}</span>
                 </>
               )}
             </button>

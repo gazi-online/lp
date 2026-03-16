@@ -29,6 +29,14 @@ const NAV_ITEMS = [
     color: '#00B86C'
   },
   {
+    id: 'registry',
+    label: 'Global Registry',
+    bnLabel: 'গ্লোবাল রেজিস্ট্রি',
+    path: '/admin/booking-management',
+    icon: LayoutDashboard,
+    color: '#10B981'
+  },
+  {
     id: 'logistics',
     label: 'Logistics Fleet',
     bnLabel: 'পরিবহন বহর',
