@@ -73,6 +73,7 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from '@/context/ThemeContext';
 import BubbleBackground from '@/components/BubbleBackground';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function RootLayout({
   children,
@@ -82,6 +83,21 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const saved = localStorage.getItem('nexus-theme');
+                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'chandra' || (!saved && systemDark)) {
+                  document.documentElement.classList.add('dark', 'chandra');
+                } else if (saved === 'surya') {
+                  document.documentElement.classList.add('surya');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -127,11 +143,12 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${notoSansBengali.variable} ${notoSerifBengali.variable} antialiased font-sans transition-colors duration-400`}
+        className={`${inter.variable} ${notoSansBengali.variable} ${notoSerifBengali.variable} antialiased font-sans transition-colors duration-300`}
         style={{ backgroundColor: 'transparent', color: 'var(--text-primary)' }}
       >
         <ThemeProvider>
           <BubbleBackground />
+          <ThemeToggle />
           {children}
         </ThemeProvider>
       </body>

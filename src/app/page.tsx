@@ -10,7 +10,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
@@ -75,7 +74,6 @@ export default function Home() {
             <Link href="/track" className="hover:text-[var(--accent-blue)] hover-text-glow transition-colors">আবেদনের স্থিতি (Track Status)</Link>
             
             <div className="flex items-center gap-4 ml-4">
-              <ThemeToggle />
               <Link href="/admin" className="px-5 py-2.5 rounded-xl bg-[var(--text-primary)] text-[var(--bg-primary)] hover:bg-[var(--accent-blue)] transition-all flex items-center gap-2 group shadow-xl">
                  <span className="text-[10px] tracking-widest uppercase font-black">Admin Login</span>
                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] group-hover:animate-pulse" />
@@ -85,7 +83,6 @@ export default function Home() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-4 md:hidden">
-            <ThemeToggle />
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-[var(--text-primary)] hover:border-[var(--accent-blue)]/50 transition-all active:scale-95"

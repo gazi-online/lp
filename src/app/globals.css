@@ -70,57 +70,57 @@
 }
 
 .chandra {
-  --bg-primary: #121212;
-  --bg-secondary: #1A1A1A;
-  --bg-tertiary: #242424;
-  --surface-glass: rgba(18, 18, 18, 0.6);
+  --bg-primary: #0f172a; /* gray-900 */
+  --bg-secondary: #1e293b; /* gray-800 */
+  --bg-tertiary: #334155; /* gray-700 */
+  --surface-glass: rgba(15, 23, 42, 0.6);
   --border-subtle: rgba(255, 255, 255, 0.05);
   --border-strong: rgba(255, 255, 255, 0.1);
-  --text-primary: #F2F2F2;
-  --text-secondary: #A0A0A0;
-  --text-tertiary: #707070;
-  --accent-saffron: #FF6B00;
-  --accent-blue: #00D1FF;
-  --accent-green: #00FF94;
-  --accent-purple: #BF7BFF;
-  --accent-red: #FF4D4D;
+  --text-primary: #f1f5f9; /* gray-100 */
+  --text-secondary: #94a3b8; /* gray-400 equivalent */
+  --text-tertiary: #64748b;
+  --accent-saffron: #fb923c;
+  --accent-blue: #60a5fa; /* blue-400 */
+  --accent-green: #4ade80;
+  --accent-purple: #c084fc;
+  --accent-red: #f87171;
 
   /* Liquid Glass Tokens - Dark */
-  --liquid-glass-bg: rgba(18, 18, 18, 0.4);
-  --liquid-glass-border: rgba(255, 255, 255, 0.08);
-  --liquid-glass-highlight: rgba(255, 255, 255, 0.03);
-  --liquid-glass-glow: rgba(0, 209, 255, 0.15);
+  --liquid-glass-bg: rgba(30, 41, 59, 0.4);
+  --liquid-glass-border: rgba(255, 255, 255, 0.1);
+  --liquid-glass-highlight: rgba(255, 255, 255, 0.05);
+  --liquid-glass-glow: rgba(96, 165, 250, 0.2);
   --liquid-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 
   /* Button & Container Specific */
-  --btn-primary-bg: #F2F2F2;
-  --btn-primary-text: #121212;
+  --btn-primary-bg: #f1f5f9;
+  --btn-primary-text: #0f172a;
   --btn-secondary-bg: rgba(255, 255, 255, 0.05);
-  --btn-secondary-text: #F2F2F2;
-  --card-bg: rgba(255, 255, 255, 0.01);
-  --card-border: rgba(255, 255, 255, 0.05);
+  --btn-secondary-text: #f1f5f9;
+  --card-bg: rgba(30, 41, 59, 0.8);
+  --card-border: rgba(255, 255, 255, 0.1);
 
-  /* Admin Specific - Cyber Military Aesthetic */
-  --admin-bg: #121212;
-  --admin-card: rgba(26, 26, 26, 0.5);
-  --admin-border: rgba(0, 209, 255, 0.1);
-  --admin-accent: #00FF94;
-  --admin-sidebar: #121212;
+  /* Admin Specific */
+  --admin-bg: #0f172a;
+  --admin-card: rgba(30, 41, 59, 0.6);
+  --admin-border: rgba(96, 165, 250, 0.15);
+  --admin-accent: #4ade80;
+  --admin-sidebar: #0f172a;
   
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.9);
-  --shadow-glow: 0 0 30px rgba(0, 209, 255, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.9);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 1);
+  --shadow-glow: 0 0 30px rgba(96, 165, 250, 0.2);
 
-  --gradient-dominant: linear-gradient(135deg, #00011A 0%, #0A0F2E 100%);
-  --gradient-accent: linear-gradient(135deg, #00011A 0%, #00D1FF 100%);
+  --gradient-dominant: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --gradient-accent: linear-gradient(135deg, #0f172a 0%, #60a5fa 100%);
 }
 
 * {
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-              color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              backdrop-filter 0.4s ease;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              backdrop-filter 0.3s ease;
 }
 
 html {
