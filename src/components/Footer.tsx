@@ -15,8 +15,6 @@ export function Footer() {
 
   return (
     <footer className="bg-transparent pt-20 pb-10 relative overflow-hidden transition-colors">
-      {/* Footer decorative bar */}
-      <div className="absolute inset-x-0 top-0 h-1 bg-[var(--accent-blue)]/10 transition-colors" />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
@@ -105,11 +103,6 @@ export function Footer() {
                        <span className="text-[10px] uppercase font-bold tracking-widest group-hover:text-white transition-colors">Open in Google Maps</span>
                     </motion.div>
                     
-                    {/* Decorative Background for Map Feel */}
-                    <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity">
-                      <div className="absolute top-1/4 left-1/4 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
-                      <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
-                    </div>
                   </a>
                 </div>
              </div>

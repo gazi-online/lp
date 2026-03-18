@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { ThemeToggle } from '../ThemeToggle';
 import { 
   LayoutDashboard, 
   Truck, 
@@ -100,8 +99,7 @@ export function CommandSidebar() {
       {/* Sidebar Header */}
       <div className="p-8 border-b border-[var(--admin-border)] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 group">
-            <div className="absolute inset-0 bg-emerald-500 rounded-xl blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
+          <div className="w-10 h-10 rounded-xl bg-white border border-[var(--admin-border)] flex items-center justify-center shadow-sm">
             <Image 
               src="/logo.png" 
               alt="Gazi Online Logo" 
@@ -119,7 +117,6 @@ export function CommandSidebar() {
             </span>
           </div>
         </div>
-        <ThemeToggle />
       </div>
 
       {/* Navigation Links */}

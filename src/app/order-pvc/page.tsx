@@ -21,6 +21,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
 import { useAdminStore } from "@/lib/store/useAdminStore";
+import InputField from "@/components/InputField";
+import GlassBackButton from "@/components/GlassBackButton";
+import { MapPin, Mail, Shield, Map } from "lucide-react";
 
 
 const formSchema = z.object({
@@ -163,21 +166,15 @@ export default function OrderPvcPage() {
   return (
     <main className="min-h-screen bg-transparent transition-all duration-700 relative overflow-hidden flex flex-col py-6 md:py-10">
 
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[50vh] bg-gradient-to-b from-[var(--accent-blue)]/5 to-transparent pointer-events-none" />
-      <div className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] bg-[var(--accent-blue)]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-[-10%] w-[30vw] h-[30vw] bg-[var(--accent-purple)]/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10 flex-1 flex flex-col">
-        {/* Compact Back Button */}
-        <Link 
-          href="/"
-          className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all group mb-6"
-        >
-          <div className="p-1.5 rounded-lg bg-white/5 border border-white/10 group-hover:border-[var(--accent-blue)]/50">
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest">হোমপেজে ফিরে যান</span>
-        </Link>
+        <div className="mb-6">
+          <Link href="/">
+            <GlassBackButton>
+              হোমপেজে ফিরে যান
+            </GlassBackButton>
+          </Link>
+        </div>
 
         <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col lg:flex-row gap-8 min-h-0">
           
@@ -240,7 +237,7 @@ export default function OrderPvcPage() {
                   <h2 className="text-2xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-none" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                     পিভিসি কার্ড অর্ডার
                   </h2>
-                  <p className="text-[9px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.4em] mt-2">ডিপ্লোয়মেন্ট প্রোটোকল</p>
+                  <p className="text-[9px] text-[var(--text-primary)]/70 font-black uppercase tracking-[0.4em] mt-2">ডিপ্লোয়মেন্ট প্রোটোকল</p>
                 </div>
 
                 <div className="flex-1 space-y-8 relative pr-2">
@@ -278,7 +275,7 @@ export default function OrderPvcPage() {
                 <div className="pt-8 border-t border-white/10 mt-auto">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-[var(--accent-blue)] animate-pulse" />
-                        <p className="text-[9px] font-black text-[var(--text-primary)]/40 uppercase tracking-[0.3em]">সিস্টেম স্ট্যাটাস: সচল</p>
+                        <p className="text-[9px] font-black text-[var(--text-primary)]/70 uppercase tracking-[0.3em]">সিস্টেম স্ট্যাটাস: সচল</p>
                     </div>
                 </div>
               </div>
@@ -357,7 +354,7 @@ export default function OrderPvcPage() {
                         <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                           নিবন্ধন চুক্তি
                         </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">আইনি অনুমোদন কেন্দ্র</p>
+                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">আইনি অনুমোদন কেন্দ্র</p>
                       </div>
 
                       <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 md:pr-4 space-y-3 md:space-y-4">
@@ -455,98 +452,84 @@ export default function OrderPvcPage() {
                         <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                           পরিচয় নথিভুক্তকরণ
                         </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">পরিচয় যাচাইকরণ প্রক্রিয়া</p>
+                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">পরিচয় যাচাইকরণ প্রক্রিয়া</p>
                       </div>
 
                       <form id="order-form" onSubmit={handleSubmit(() => setCurrentStep(2))} className="flex-1 space-y-4 md:space-y-6 overflow-y-auto custom-scrollbar px-2 md:px-6 pr-4 md:pr-8 pb-4 md:pb-6 mt-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-8 md:gap-y-6 pb-2">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">নাম</label>
-                            <input 
-                              {...register("fullName")}
-                              placeholder="আইনি পুরো নাম"
-                              className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button box-border overflow-visible"
-                            />
-                            {errors.fullName && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.fullName.message}</p>}
-                          </div>
+                          <InputField 
+                            label="নাম"
+                            placeholder="আইনি পুরো নাম"
+                            icon={User}
+                            error={errors.fullName?.message}
+                            {...register("fullName")}
+                          />
                           
-                          <div className="space-y-2">
-                             <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">ফোন নম্বর</label>
-                             <input 
-                               {...register("phone")}
-                               placeholder="১০ ডিজিটের মোবাইল"
-                               className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button box-border overflow-visible"
-                             />
-                             {errors.phone && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.phone.message}</p>}
-                          </div>
+                          <InputField 
+                            label="ফোন নম্বর"
+                            placeholder="১০ ডিজিটের মোবাইল"
+                            icon={Smartphone}
+                            error={errors.phone?.message}
+                            {...register("phone")}
+                          />
                         </div>
 
                         <div className="space-y-4 md:space-y-6 pt-4 md:pt-6 border-t border-white/5">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-8 md:gap-y-6">
-                            <div className="space-y-2">
-                              <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">গ্রাম/এলাকা</label>
-                              <input 
-                                {...register("village")}
-                                placeholder="গ্রামের নাম লিখুন"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button box-border overflow-visible"
-                              />
-                              {errors.village && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.village.message}</p>}
-                            </div>
+                            <InputField 
+                              label="গ্রাম/এলাকা"
+                              placeholder="গ্রামের নাম লিখুন"
+                              icon={MapPin}
+                              error={errors.village?.message}
+                              {...register("village")}
+                            />
 
-                            <div className="space-y-2">
-                               <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">ডাকঘর</label>
-                              <input 
-                                {...register("postOffice")}
-                                placeholder="ডাকঘরের নাম"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button box-border overflow-visible"
-                              />
-                              {errors.postOffice && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.postOffice.message}</p>}
-                            </div>
+                            <InputField 
+                              label="ডাকঘর"
+                              placeholder="ডাকঘরের নাম"
+                              icon={Mail}
+                              error={errors.postOffice?.message}
+                              {...register("postOffice")}
+                            />
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-8 md:gap-y-6">
-                            <div className="space-y-2">
-                               <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">থানা</label>
-                              <input 
-                                {...register("policeStation")}
-                                placeholder="থানার নাম"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button box-border overflow-visible"
-                              />
-                              {errors.policeStation && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.policeStation.message}</p>}
-                            </div>
+                            <InputField 
+                              label="থানা"
+                              placeholder="থানার নাম"
+                              icon={Shield}
+                              error={errors.policeStation?.message}
+                              {...register("policeStation")}
+                            />
 
-                            <div className="space-y-2">
-                               <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">জেলা</label>
-                              <input 
-                                {...register("district")}
-                                placeholder="জেলার নাম লিখুন"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button box-border overflow-visible"
-                              />
-                              {errors.district && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.district.message}</p>}
-                            </div>
+                            <InputField 
+                              label="জেলা"
+                              placeholder="জেলার নাম লিখুন"
+                              icon={Map}
+                              error={errors.district?.message}
+                              {...register("district")}
+                            />
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-x-8 md:gap-y-6">
-                            <div className="space-y-2 lg:col-span-2">
-                               <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">পিন কোড</label>
-                               <input 
-                                 {...register("pinCode")}
-                                  placeholder="৬ ডিজিট"
-                                 className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm tracking-widest liquid-glass-button box-border overflow-visible"
-                               />
-                               {errors.pinCode && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.pinCode.message}</p>}
+                            <div className="lg:col-span-2">
+                              <InputField 
+                                label="পিন কোড"
+                                placeholder="৬ ডিজিট"
+                                icon={MapPin}
+                                error={errors.pinCode?.message}
+                                {...register("pinCode")}
+                              />
                             </div>
                           </div>
                         </div>
                       </form>
 
                       <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex flex-col md:flex-row gap-3">
-                        <button 
+                        <GlassBackButton 
                           onClick={() => setCurrentStep(0)}
-                          className="w-full md:w-auto px-8 py-4 md:py-5 bg-white/5 text-[var(--text-primary)] font-black rounded-xl md:rounded-2xl border border-white/10 transition-all hover:bg-white/10 active:scale-95 uppercase tracking-widest text-[9px] md:text-[10px] order-2 md:order-1"
-                        >
-                          পেছনে
-                        </button>
+                          className="order-2 md:order-1"
+                        />
                         <button 
                           form="order-form"
                           type="submit"
@@ -570,7 +553,7 @@ export default function OrderPvcPage() {
                         <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                           ডকুমেন্ট আপলোড
                         </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">ডকুমেন্ট যাচাইকরণ গ্রিড</p>
+                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">ডকুমেন্ট যাচাইকরণ গ্রিড</p>
                       </div>
 
                       <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 md:pr-2 pb-4 md:pb-6">
@@ -604,12 +587,11 @@ export default function OrderPvcPage() {
                       </div>
 
                       <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex flex-col md:flex-row gap-3">
-                        <button 
+                        <GlassBackButton 
                           onClick={() => setCurrentStep(1)}
-                          className="w-full md:w-auto px-8 py-4 md:py-5 bg-white/5 text-[var(--text-primary)] font-black rounded-xl md:rounded-2xl border border-white/10 transition-all hover:bg-white/10 active:scale-95 uppercase tracking-widest text-[9px] md:text-[10px] order-2 md:order-1"
                         >
-                          পরিচয়
-                        </button>
+                          পরিচয় (Identity)
+                        </GlassBackButton>
                         <button 
                           onClick={handleSubmit(onFinalSubmit)}
                           disabled={isSubmitting || !isDocsStepValid}
@@ -651,7 +633,7 @@ export default function OrderPvcPage() {
 
                             <div className="bg-white/5 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/10 inline-flex items-center gap-3 md:gap-4 px-6 md:px-10">
                                 <div className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
-                                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[var(--text-primary)]/40">হ্যান্ডশেক প্রতিক্রিয়া জন্য অপেক্ষা করছি...</span>
+                                 <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[var(--text-primary)]/70">হ্যান্ডশেক প্রতিক্রিয়া জন্য অপেক্ষা করছি...</span>
                             </div>
                          </div>
                        ) : (

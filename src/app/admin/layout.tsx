@@ -16,11 +16,6 @@ export default function AdminLayout({
   return (
     <AuthGuard>
       <div className="min-h-screen bg-[var(--admin-bg)] text-[var(--text-primary)] font-sans selection:bg-accent/30 selection:text-white transition-colors duration-400">
-        {/* Background Cyber-Grid Effect */}
-        <div className="fixed inset-0 pointer-events-none opacity-20 transition-opacity">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--admin-bg)] via-transparent to-[var(--admin-bg)]"></div>
-        </div>
 
         {!isAuthPage ? (
           <div className="relative flex h-screen overflow-hidden">
@@ -32,9 +27,9 @@ export default function AdminLayout({
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
               {/* Top Status Bar */}
-              <header className="h-16 flex items-center justify-between px-8 border-b border-white/10 bg-white/5 backdrop-blur-xl z-20 transition-all">
+              <header className="h-16 flex items-center justify-between px-8 border-b border-[var(--admin-border)] bg-white z-20 transition-all">
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.3em] font-black text-emerald-500/80">
                     System Active // সিস্টেম সক্রিয়
                   </span>

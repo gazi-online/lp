@@ -44,27 +44,19 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-transparent">
-      {/* Background Gradient Mesh */}
-      <div className="fixed inset-0 -z-10 bg-transparent selection:bg-accent/30 transition-colors duration-400">
-        <div className="absolute top-0 inset-0 bg-transparent" />
-        <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-secondary/5 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-accent/5 blur-[100px]" />
-      </div>
+
 
       {/* Header Container */}
-      <header className="fixed top-0 w-full z-50 glass-panel border-b border-[var(--border-subtle)] transition-all duration-400">
+      <header className="fixed top-0 w-full z-50 bg-white border-b border-[var(--border-subtle)] transition-all duration-400">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between relative z-50">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 group">
-              <div className="absolute inset-0 bg-[var(--accent-blue)] rounded-xl blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
-              <Image 
-                src="/logo.png" 
-                alt="Gazi Online Logo" 
-                width={40} 
-                height={40} 
-                className="relative z-10 rounded-xl"
-              />
-            </div>
+            <Image 
+              src="/logo.png" 
+              alt="Gazi Online Logo" 
+              width={40} 
+              height={40} 
+              className="relative z-10 rounded-xl"
+            />
             <div className="text-xl font-bold text-[var(--text-primary)] tracking-widest drop-shadow-sm transition-colors">
               GAZI<span className="text-[var(--accent-blue)]">ONLINE</span>
             </div>
@@ -103,11 +95,6 @@ export default function Home() {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-0 z-40 md:hidden bg-[var(--bg-primary)] pt-24 px-6"
             >
-              {/* Decorative Mesh in Menu */}
-              <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[80%] rounded-full bg-accent/10 blur-[100px]" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-secondary/10 blur-[80px]" />
-              </div>
 
               <div className="flex flex-col gap-8 h-full">
                 <div className="flex flex-col gap-6">

@@ -11,7 +11,9 @@ import {
   ArrowLeft,
   ShieldCheck,
   User,
-  Fingerprint
+  Fingerprint,
+  Mail,
+  CreditCard
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -19,6 +21,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
 import { useAdminStore } from "@/lib/store/useAdminStore";
+import InputField from "@/components/InputField";
+import GlassBackButton from "@/components/GlassBackButton";
 
 const formSchema = z.object({
   fullName: z.string().min(3, "Full name is required"),
@@ -111,21 +115,15 @@ export default function BookAppointmentPage() {
   return (
     <main className="min-h-screen bg-[var(--bg-primary)] transition-all duration-700 relative overflow-hidden flex flex-col py-6 md:py-10">
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[50vh] bg-gradient-to-b from-[var(--accent-blue)]/5 to-transparent pointer-events-none" />
-      <div className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] bg-[var(--accent-blue)]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-[-10%] w-[30vw] h-[30vw] bg-[var(--accent-purple)]/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10 flex-1 flex flex-col">
-        {/* Compact Back Button */}
-        <Link 
-          href="/"
-          className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all group mb-6"
-        >
-          <div className="p-1.5 rounded-lg bg-white/5 border border-white/10 group-hover:border-[var(--accent-blue)]/50">
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest">Back to Hub</span>
-        </Link>
+        <div className="mb-6">
+          <Link href="/">
+            <GlassBackButton>
+              Back to Hub
+            </GlassBackButton>
+          </Link>
+        </div>
 
         <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col lg:flex-row gap-8 min-h-0">
           
@@ -173,7 +171,7 @@ export default function BookAppointmentPage() {
                   <h2 className="text-2xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-none" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                     Book Appointment
                   </h2>
-                  <p className="text-[9px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.4em] mt-2">e-PAN Protocol Hub</p>
+                  <p className="text-[9px] text-[var(--text-primary)]/70 font-black uppercase tracking-[0.4em] mt-2">e-PAN Protocol Hub</p>
                 </div>
 
                 <div className="flex-1 space-y-8 relative pr-2">
@@ -208,7 +206,7 @@ export default function BookAppointmentPage() {
                 <div className="pt-8 border-t border-white/10 mt-auto">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-[var(--accent-blue)] animate-pulse" />
-                        <p className="text-[9px] font-black text-[var(--text-primary)]/40 uppercase tracking-[0.3em]">System Identity: Live</p>
+                        <p className="text-[9px] font-black text-[var(--text-primary)]/70 uppercase tracking-[0.3em]">System Identity: Live</p>
                     </div>
                 </div>
               </div>
@@ -240,7 +238,7 @@ export default function BookAppointmentPage() {
                         <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                           Deployment Agreement
                         </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Legal Clearance Hub</p>
+                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Legal Clearance Hub</p>
                       </div>
 
                       <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 md:pr-4 space-y-3 md:space-y-4">
@@ -283,60 +281,52 @@ export default function BookAppointmentPage() {
                         <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                           Identity Enrollment
                         </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Subject Identification Nodes</p>
+                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Subject Identification Nodes</p>
                       </div>
 
                       <form id="appointment-form" onSubmit={handleSubmit(() => setCurrentStep(2))} className="flex-1 space-y-4 md:space-y-6 overflow-y-auto custom-scrollbar px-2 md:px-6 pr-4 md:pr-8 pb-4 md:pb-6 mt-1">
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">নাম (Full Identity)</label>
-                          <input 
-                            {...register("fullName")}
-                            placeholder="আপনার পূর্ণ নাম লিখুন (Legal Full Name)"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button"
-                          />
-                          {errors.fullName && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.fullName.message}</p>}
-                        </div>
+                        <InputField 
+                          label="নাম (Full Identity)"
+                          placeholder="আপনার পূর্ণ নাম লিখুন (Legal Full Name)"
+                          icon={User}
+                          error={errors.fullName?.message}
+                          {...register("fullName")}
+                        />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-8 md:gap-y-6 pt-2">
-                          <div className="space-y-2">
-                             <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">আধার নম্বর (Aadhaar Number)</label>
-                             <input 
-                               {...register("aadhaarNumber")}
-                               placeholder="XXXX XXXX XXXX"
-                               className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm tracking-[0.2em] liquid-glass-button"
-                             />
-                             {errors.aadhaarNumber && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.aadhaarNumber.message}</p>}
-                          </div>
+                          <InputField 
+                            label="আধার নম্বর (Aadhaar Number)"
+                            placeholder="XXXX XXXX XXXX"
+                            icon={CreditCard}
+                            error={errors.aadhaarNumber?.message}
+                            {...register("aadhaarNumber")}
+                          />
                           
-                          <div className="space-y-2">
-                             <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">ফোন নম্বর (Contact)</label>
-                             <input 
-                               {...register("phone")}
-                               placeholder="10 digit mobile"
-                               className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button"
-                             />
-                             {errors.phone && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.phone.message}</p>}
-                          </div>
+                          <InputField 
+                            label="ফোন নম্বর (Contact)"
+                            placeholder="10 digit mobile"
+                            icon={Smartphone}
+                            error={errors.phone?.message}
+                            {...register("phone")}
+                          />
                         </div>
 
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-black uppercase tracking-widest text-[var(--text-primary)]/40 ml-1">Email Address (Optional)</label>
-                          <input 
-                            {...register("email")}
-                            placeholder="your@email.com"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all font-black text-[12px] md:text-sm liquid-glass-button"
-                          />
-                          {errors.email && <p className="text-[9px] text-[var(--accent-saffron)] font-black uppercase tracking-widest flex items-center gap-2 mt-1"><AlertCircle size={10}/> {errors.email.message}</p>}
-                        </div>
+                        <InputField 
+                          label="Email Address (Optional)"
+                          placeholder="your@email.com"
+                          icon={Mail}
+                          error={errors.email?.message}
+                          {...register("email")}
+                        />
                       </form>
 
                       <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex flex-col md:flex-row gap-3">
-                        <button 
+                        <GlassBackButton 
                           onClick={() => setCurrentStep(0)}
-                          className="w-full md:w-auto px-8 py-4 md:py-5 bg-white/5 text-[var(--text-primary)] font-black rounded-xl md:rounded-2xl border border-white/10 transition-all hover:bg-white/10 active:scale-95 uppercase tracking-widest text-[9px] md:text-[10px] order-2 md:order-1"
+                          className="order-2 md:order-1"
                         >
                           Back
-                        </button>
+                        </GlassBackButton>
                         <button 
                           form="appointment-form"
                           type="submit"
@@ -360,7 +350,7 @@ export default function BookAppointmentPage() {
                         <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
                           Asset Dispatch
                         </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/40 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Document Verification Grid</p>
+                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Document Verification Grid</p>
                       </div>
 
                       <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 md:pr-2 pb-4 md:pb-6">
@@ -392,7 +382,7 @@ export default function BookAppointmentPage() {
                                     {labels[docId]} 
                                     {isRequired && <span className="text-[var(--accent-saffron)] ml-1">*</span>}
                                     <br/>
-                                    <span className="text-[7px] md:text-[9px] opacity-40 font-bold uppercase tracking-widest block mt-1">({subs[docId]})</span>
+                                    <span className="text-[7px] md:text-[9px] opacity-70 font-bold uppercase tracking-widest block mt-1">({subs[docId]})</span>
                                   </span>
                                   <input 
                                     type="file" 
@@ -407,12 +397,11 @@ export default function BookAppointmentPage() {
                       </div>
 
                       <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex flex-col md:flex-row gap-3">
-                        <button 
+                        <GlassBackButton 
                           onClick={() => setCurrentStep(1)}
-                          className="w-full md:w-auto px-8 py-4 md:py-5 bg-white/5 text-[var(--text-primary)] font-black rounded-xl md:rounded-2xl border border-white/10 transition-all hover:bg-white/10 active:scale-95 uppercase tracking-widest text-[9px] md:text-[10px] order-2 md:order-1"
                         >
                           Identity
-                        </button>
+                        </GlassBackButton>
                         <button 
                           onClick={handleSubmit(onFinalSubmit)}
                           disabled={isSubmitting || !isDocsStepValid}

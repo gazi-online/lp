@@ -168,9 +168,9 @@ export default function IntelligenceBrain() {
           <div className="h-64 flex items-end gap-3 px-4">
              {[45, 67, 34, 89, 120, 56, 78, 45, 98, 110, 85, 95].map((val, i) => (
                <div key={i} className="flex-1 flex flex-col justify-end gap-2 group cursor-pointer">
-                 <div className="relative w-full rounded-full transition-all duration-500 group-hover:glow-blue" style={{ 
+                 <div className="relative w-full rounded-full transition-all duration-500" style={{ 
                    height: `${val}%`, 
-                   background: `linear-gradient(to top, #0033FF, transparent)`,
+                   background: `#2563eb`,
                    opacity: 0.2 + (val/150)
                  }}>
                     <div className="absolute top-0 left-0 w-full h-1 bg-white/40 rounded-full group-hover:bg-white transition-colors" />
@@ -204,12 +204,12 @@ export default function IntelligenceBrain() {
                   <span className="text-[var(--text-primary)]/60 transition-colors">Execution Progress</span>
                   <span className="text-emerald-500">78%</span>
                </div>
-               <div className="h-2 w-full bg-[#00011A] rounded-full overflow-hidden border border-[var(--admin-border)] transition-colors">
+               <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden border border-[var(--admin-border)] transition-colors">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: '78%' }}
                     transition={{ delay: 1, duration: 1.5 }}
-                    className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+                    className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400"
                   />
                </div>
                <p className="text-[10px] text-[var(--text-primary)]/40 leading-relaxed italic transition-colors">

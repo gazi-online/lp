@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Package, Clock, CheckCircle2, Truck, ArrowLeft, ShieldCheck, Activity } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import GlassBackButton from "@/components/GlassBackButton";
 
 const statuses = [
   { id: "submitted", label: "আবেদন জমা হয়েছে", sub: "ID VERIFIED", icon: Clock, color: "text-[var(--accent-saffron)]", bg: "bg-[var(--accent-saffron)]/10" },
@@ -41,21 +42,15 @@ export default function TrackPage() {
   return (
     <main className={`min-h-screen bg-[var(--bg-primary)] transition-all duration-700 relative overflow-hidden flex flex-col ${result ? 'py-6 md:py-10' : 'py-16 md:py-24'}`}>
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[50vh] bg-gradient-to-b from-[var(--accent-blue)]/5 to-transparent pointer-events-none" />
-      <div className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] bg-[var(--accent-blue)]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-[-10%] w-[30vw] h-[30vw] bg-[var(--accent-purple)]/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10 flex-1 flex flex-col">
-        {/* Compact Back Button */}
-        <Link 
-          href="/"
-          className={`inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all group ${result ? 'mb-6' : 'mb-16'}`}
-        >
-          <div className="p-1.5 rounded-lg bg-white/5 border border-white/10 group-hover:border-[var(--accent-blue)]/50">
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest">Back to Hub</span>
-        </Link>
+        <div className={`transition-all duration-500 ${result ? 'mb-6' : 'mb-16'}`}>
+          <Link href="/">
+            <GlassBackButton>
+              Back to Hub
+            </GlassBackButton>
+          </Link>
+        </div>
 
         <div className={`w-full max-w-5xl mx-auto flex flex-col transition-all duration-700 ${result ? 'flex-1' : ''}`}>
           {/* Reactive Header */}

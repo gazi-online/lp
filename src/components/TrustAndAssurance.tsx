@@ -58,8 +58,6 @@ const partners = [
 export function TrustAndAssurance() {
   return (
     <section className="py-20 relative overflow-hidden transition-colors">
-      {/* Background decoration */}
-      <div className="absolute inset-x-0 top-0 h-px bg-[var(--accent-blue)]/10 transition-colors" />
       
       <div className="container mx-auto px-4">
         
@@ -112,7 +110,7 @@ export function TrustAndAssurance() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                  className="absolute inset-0 bg-[var(--accent-blue)] rounded-2xl -rotate-2 shadow-[var(--shadow-glow)]"
+                  className="absolute inset-0 bg-[var(--accent-blue)] rounded-2xl -rotate-2"
                 />
                 <span className="relative z-10 text-white italic drop-shadow-sm">
                   "গ্রাহকরা"
@@ -209,10 +207,10 @@ function LiveActivityCard() {
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className="relative p-12 rounded-[3.5rem] overflow-hidden bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)] backdrop-blur-[80px] border border-white/30 shadow-[var(--shadow-md)] ring-1 ring-inset ring-white/20 cursor-pointer transition-all duration-300 group"
+      className="relative p-12 rounded-[3.5rem] overflow-hidden bg-white border border-[var(--border-subtle)] shadow-sm ring-1 ring-inset ring-black/5 cursor-pointer transition-all duration-300 group"
     >
       <div 
-        className="absolute inset-0 bg-black/10 backdrop-blur-3xl"
+        className="absolute inset-0 bg-gray-50"
         style={{ transform: "translateZ(-20px)" }}
       />
       
@@ -223,14 +221,14 @@ function LiveActivityCard() {
         <motion.h3 
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          className="text-xl font-black text-white/70 mb-4 uppercase tracking-[0.2em]"
+          className="text-xl font-black text-[var(--text-primary)]/70 mb-4 uppercase tracking-[0.2em]"
         >
           লাইভ অ্যাক্টিভিটি
         </motion.h3>
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          className="text-7xl font-black text-white mb-6 tracking-tighter drop-shadow-2xl"
+          className="text-7xl font-black text-[var(--accent-blue)] mb-6 tracking-tighter"
         >
           <CountUp value={12450} />+
         </motion.div>
@@ -238,7 +236,7 @@ function LiveActivityCard() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-white/90 text-lg font-black leading-relaxed max-w-xs drop-shadow-md"
+          className="text-[var(--text-primary)]/90 text-lg font-black leading-relaxed max-w-xs"
         >
           সফলভাবে সম্পন্ন করা ডিজিটাল লেনদেন ও আবেদন
         </motion.p>
