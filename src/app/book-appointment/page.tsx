@@ -2,494 +2,315 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Upload, 
   CheckCircle2, 
-  AlertCircle, 
-  Smartphone, 
-  FileCheck, 
   ArrowRight, 
-  ArrowLeft,
-  ShieldCheck,
-  User,
+  Calendar as CalendarIcon, 
+  User, 
+  Smartphone, 
+  Globe,
+  MonitorCheck,
   Fingerprint,
-  Mail,
-  CreditCard
+  CreditCard,
+  CreditCard as PaymentIcon,
+  FileCheck,
+  ArrowLeft
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
-import { useAdminStore } from "@/lib/store/useAdminStore";
+import { format, addDays, isSameDay } from "date-fns";
 import InputField from "@/components/InputField";
 import GlassBackButton from "@/components/GlassBackButton";
+import ServiceCard from "@/components/ServiceCard";
+import SlotPicker from "@/components/SlotPicker";
+import VoiceInput from "@/components/VoiceInput";
 
 const formSchema = z.object({
-  fullName: z.string().min(3, "Full name is required"),
-  aadhaarNumber: z.string().regex(/^\d{12}$/, "Invalid Aadhaar Number (12 digits required)"),
-  phone: z.string().regex(/^\d{10}$/, "Invalid Phone Number (10 digits required)"),
-  email: z.string().email().optional().or(z.literal("")),
+  fullName: z.string().min(2, "আপনার নাম লিখুন (Write name)"),
+  phone: z.string().regex(/^\d{10}$/, "সঠিক ১০ সংখ্যার নম্বর দিন (10 digits)"),
+  notes: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-interface UploadedFiles {
-  photo: boolean;
-  signature: boolean;
-  aadhaarDoc: boolean;
-  additionalDoc: boolean;
-  annexureA: boolean;
-}
-
-const steps = [
-  { id: "terms", title: "Deployment Agreement", icon: ShieldCheck, sub: "Legal Clearance" },
-  { id: "identity", title: "Identity Enrollment", icon: User, sub: "Personal Details" },
-  { id: "assets", title: "Asset Dispatch", icon: Upload, sub: "Document Verification" },
-  { id: "verify", title: "OTP Handshake", icon: Fingerprint, sub: "Security Protocol" },
+const STEPS = [
+  { id: "service", title: "কাজ বেছে নিন", sub: "Step 1: Kaaj", icon: Globe },
+  { id: "schedule", title: "সময় ও তারিখ", sub: "Step 2: Somoy", icon: CalendarIcon },
+  { id: "identity", title: "আপনার নাম", sub: "Step 3: Naam", icon: User },
+  { id: "review", title: "মিলিয়ে দেখুন", sub: "Step 4: Check", icon: MonitorCheck },
+  { id: "payment", title: "টাকা জমা", sub: "Step 5: Taka", icon: PaymentIcon }
 ];
 
-export default function BookAppointmentPage() {
+export default function AppointmentPage() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submittedAppId, setSubmittedAppId] = useState<string | null>(null);
-  const [otpValue, setOtpValue] = useState("");
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
-    photo: false,
-    signature: false,
-    aadhaarDoc: false,
-    additionalDoc: false,
-    annexureA: false,
-  });
-
-  const { addPanApplication, panQueue, updatePanOtp } = useAdminStore();
-  const currentApp = useMemo(() => panQueue.find(p => p.id === submittedAppId), [panQueue, submittedAppId]);
+  const [services, setServices] = useState<any[]>([]);
+  const [selectedService, setSelectedService] = useState<any>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [slots, setSlots] = useState<any[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFinalizing, setIsFinalizing] = useState(false);
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-    reset,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
 
-  const handleFileUpload = (field: keyof UploadedFiles) => {
-    setUploadedFiles(prev => ({ ...prev, [field]: true }));
-  };
+  useEffect(() => {
+    setMounted(true);
+    setSelectedDate(new Date());
+  }, []);
 
-  const isDocsStepValid = uploadedFiles.photo && uploadedFiles.signature && uploadedFiles.aadhaarDoc && uploadedFiles.additionalDoc;
+  // Load Services
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await fetch('/api/services');
+        if (res.ok) {
+          const data = await res.json();
+          setServices(data);
+        } else {
+             setServices([
+                { id: 1, name: 'আধার কার্ড/মোবাইল নম্বর', description: 'আধার কার্ডের ছবি বা ফোন নম্বর বদলান', price: '100', icon_name: 'Fingerprint' },
+                { id: 2, name: 'নতুন প্যান কার্ড বানান', description: 'NSDL প্যান কার্ডের নতুন আবেদন করুন', price: '120', icon_name: 'CreditCard' },
+                { id: 3, name: 'জীবন সংশয়পত্র (Life Cert)', description: 'পেনশনের জন্য ডিজিটাল লাইফ সার্টিফিকেট', price: '50', icon_name: 'FileCheck' },
+                { id: 4, name: 'অন্যান্য ডিজিটাল কাজ', description: 'যেকোনো ফর্ম ফিলাপ বা প্রিন্টিং', price: '30', icon_name: 'Smartphone' },
+             ]);
+        }
+      } catch (e) {
+        console.error("API failed", e);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  // Load Slots when Date/Service changes
+  useEffect(() => {
+    if (selectedService && selectedDate) {
+      const fetchSlots = async () => {
+        setIsLoading(true);
+        try {
+          const dateStr = format(selectedDate, 'yyyy-MM-dd');
+          const res = await fetch(`/api/availability?serviceId=${selectedService.id}&date=${dateStr}`);
+          if (res.ok) {
+            const data = await res.json();
+            setSlots(data.slots || data);
+          }
+        } catch (e) {
+          setSlots([]); 
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchSlots();
+    }
+  }, [selectedService, selectedDate]);
 
   const onFinalSubmit = async (data: FormData) => {
-    if (!isDocsStepValid) return;
-    setIsSubmitting(true);
-    
-    const appId = `PAN-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
-    
-    addPanApplication({
-      client: data.fullName,
-      phone: data.phone,
-      aadhaarNumber: data.aadhaarNumber,
-      type: 'New e-PAN',
-      source: 'Portal Submission',
-      status: 'Verification Required',
-      otpStatus: 'None',
-      photo: 'uploaded_photo',
-      signature: 'uploaded_signature',
-      aadhaarDoc: 'uploaded_aadhaar',
-      additionalDoc: 'uploaded_additional',
-      annexureA: uploadedFiles.annexureA ? 'uploaded_annexure' : undefined,
-    });
-    
-    setSubmittedAppId(appId);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setCurrentStep(3);
+    if (!selectedDate || !selectedSlot) return;
+    setIsFinalizing(true);
+    await new Promise(r => setTimeout(r, 2000));
+    setBookingId(`GAZI-${Math.floor(1000 + Math.random() * 9000)}`);
+    setIsFinalizing(false);
+    setCurrentStep(5); // Success screen
   };
 
-  const handleOtpSubmit = () => {
-    if (submittedAppId && otpValue.length === 6) {
-      updatePanOtp(submittedAppId, otpValue);
-    }
-  };
+  const nextAvailableDates = useMemo(() => {
+    if (!mounted) return [];
+    return Array.from({ length: 7 }, (_, i) => addDays(new Date(), i));
+  }, [mounted]);
+
+  if (!mounted) return null;
 
   return (
-    <main className="min-h-screen bg-[var(--bg-primary)] transition-all duration-700 relative overflow-hidden flex flex-col py-6 md:py-10">
-      {/* Background Ambience */}
-
-      <div className="container mx-auto px-4 relative z-10 flex-1 flex flex-col">
-        <div className="mb-6">
+    <main className="min-h-screen bg-[var(--bg-primary)] flex flex-col pt-4 md:pt-10 pb-20">
+      <div className="container mx-auto px-4 flex-1 flex flex-col">
+        {/* Back Button */}
+        <div className="mb-6 flex justify-between items-center">
           <Link href="/">
-            <GlassBackButton>
-              Back to Hub
-            </GlassBackButton>
+            <GlassBackButton>আগের পাতা (Back)</GlassBackButton>
           </Link>
+          <div className="bg-white/5 px-4 py-2 rounded-full border border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40">
+            CSC Hub: Basirhat v2.0
+          </div>
         </div>
 
-        <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col lg:flex-row gap-8 min-h-0">
-          
-          {/* Progress Tracker - Responsive Design */}
-          <div className="lg:w-[320px] shrink-0 space-y-4 md:space-y-6 flex flex-col">
-            {/* Mobile/Tablet Horizontal Stepper */}
-            <div className="lg:hidden liquid-glass p-6 rounded-[2rem] border border-white/10 relative overflow-hidden">
-               <div className="flex justify-between items-center relative gap-2">
-                  <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-white/5 z-0" />
-                  {steps.map((step, idx) => {
-                    const isActive = currentStep === idx;
-                    const isCompleted = currentStep > idx;
-                    return (
-                      <div key={step.id} className="relative z-10 flex flex-col items-center gap-2 group">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all duration-500 ${
-                          isActive 
-                            ? 'border-[var(--accent-blue)] bg-[var(--accent-blue)]/20 shadow-[0_0_15px_rgba(0,209,255,0.2)]' 
-                            : isCompleted 
-                              ? 'border-[var(--accent-green)] bg-[var(--accent-green)] text-white' 
-                              : 'border-white/10 bg-white/5'
-                        }`}>
-                          {isCompleted ? <CheckCircle2 size={14} /> : <step.icon size={14} className={isActive ? 'text-[var(--accent-blue)]' : 'text-[var(--text-tertiary)]'} />}
-                        </div>
-                        {isActive && (
-                          <motion.span 
-                            layoutId="activeStep"
-                            className="absolute -bottom-1 w-1 h-1 rounded-full bg-[var(--accent-blue)] shadow-[0_0_5px_var(--accent-blue)]" 
-                          />
+        {/* Unified Mobile Stepper */}
+        <div className="mb-8 flex justify-between items-center gap-2 max-w-2xl mx-auto w-full px-2">
+            {STEPS.map((step, idx) => {
+                const isActive = currentStep === idx;
+                const isCompleted = currentStep > idx;
+                return (
+                    <div key={idx} className="flex flex-col items-center gap-2 flex-1 relative">
+                        {idx !== 0 && (
+                            <div className={`absolute right-1/2 translate-x-1/2 top-5 -left-1/2 h-1 w-full bg-white/5 -z-10 ${isCompleted ? 'bg-[var(--accent-blue)]' : ''}`} />
                         )}
-                      </div>
-                    );
-                  })}
-               </div>
-               <div className="mt-4 text-center">
-                  <p className="text-[10px] font-black text-[var(--text-primary)] uppercase tracking-widest">{steps[currentStep].title}</p>
-               </div>
-            </div>
-
-            {/* Desktop Vertical Sidebar */}
-            <div className="hidden lg:flex liquid-glass p-8 rounded-[2.5rem] border border-white/10 relative overflow-hidden flex-1 flex-col">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--accent-blue)]/10 blur-[40px] pointer-events-none" />
-              
-              <div className="relative h-full flex flex-col">
-                <div className="mb-10">
-                  <h2 className="text-2xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-none" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
-                    Book Appointment
-                  </h2>
-                  <p className="text-[9px] text-[var(--text-primary)]/70 font-black uppercase tracking-[0.4em] mt-2">e-PAN Protocol Hub</p>
-                </div>
-
-                <div className="flex-1 space-y-8 relative pr-2">
-                  <div className="absolute left-[20px] top-4 bottom-4 w-px bg-white/5" />
-                  
-                  {steps.map((step, idx) => {
-                    const isActive = currentStep === idx;
-                    const isCompleted = currentStep > idx;
-
-                    return (
-                      <div key={step.id} className={`flex items-start gap-6 relative z-10 transition-all duration-500 ${!isActive && !isCompleted ? 'opacity-30 grayscale' : 'opacity-100'}`}>
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border-2 transition-all duration-500 shrink-0 ${
-                          isActive 
-                            ? 'border-[var(--accent-blue)] bg-[var(--accent-blue)]/20 shadow-[0_0_20px_rgba(0,209,255,0.2)]' 
-                            : isCompleted 
-                              ? 'border-[var(--accent-green)] bg-[var(--accent-green)] text-white' 
-                              : 'border-white/10 bg-white/5'
+                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border-2 transition-all ${
+                            isActive ? 'bg-[var(--accent-blue)] text-white scale-110 shadow-lg' : isCompleted ? 'bg-[var(--accent-green)] text-white' : 'bg-white/5 text-white/20 border-white/5'
                         }`}>
-                          {isCompleted ? <CheckCircle2 size={18} /> : <step.icon size={18} className={isActive ? 'text-[var(--accent-blue)]' : ''} />}
+                            {isCompleted ? <CheckCircle2 size={18} /> : <step.icon size={18} />}
                         </div>
-                        <div className="pt-1">
-                          <h4 className={`text-[11px] font-black uppercase tracking-wider ${isActive ? 'text-[var(--accent-blue)]' : 'text-[var(--text-primary)]'}`}>
-                            {step.title}
-                          </h4>
-                          <p className="text-[8px] text-[var(--text-tertiary)] font-bold uppercase tracking-widest">{step.sub}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="pt-8 border-t border-white/10 mt-auto">
-                    <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-[var(--accent-blue)] animate-pulse" />
-                        <p className="text-[9px] font-black text-[var(--text-primary)]/70 uppercase tracking-[0.3em]">System Identity: Live</p>
                     </div>
-                </div>
-              </div>
-            </div>
+                );
+            })}
+        </div>
 
-            <div className="liquid-glass bg-white/5 border border-white/10 p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <ShieldCheck size={18} className="text-[var(--accent-green)]" />
-                <span className="text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-widest">NSDL Secure Tunnel</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Console */}
-          <div className="flex-1 flex flex-col min-w-0 h-full">
-            <div className="liquid-glass flex-1 p-6 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] border border-white/10 relative flex flex-col overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-                
-                <AnimatePresence mode="wait">
-                  {currentStep === 0 && (
-                    <motion.div
-                      key="step0"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      className="flex-1 flex flex-col"
-                    >
-                      <div className="mb-6 md:mb-10">
-                        <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
-                          Deployment Agreement
-                        </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Legal Clearance Hub</p>
+        <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col">
+          <div className="liquid-glass flex-1 p-6 md:p-12 rounded-[3.5rem] border border-white/10 flex flex-col shadow-2xl overflow-hidden relative">
+             <AnimatePresence mode="wait">
+                {currentStep === 0 && (
+                    <motion.div key="step0" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex-1 flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <div className="text-center mb-10">
+                        <h1 className="text-4xl font-black tracking-tighter text-[var(--text-primary)] font-serif italic mb-2">কাজ বেছে নিন (Select)</h1>
+                        <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[var(--text-secondary)]">আপনার কী কাজ করতে হবে তা এখান থেকে ঠিক করুন</p>
                       </div>
 
-                      <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 md:pr-4 space-y-3 md:space-y-4">
-                        {[
-                          "আমি আমার আধার নম্বর এবং আধার-সংযুক্ত মোবাইল নম্বর প্রস্তুত রেখেছি। (I have my Aadhaar and Aadhaar-linked mobile ready).",
-                          "আমি ই-কেওয়াইসি (e-KYC) প্রক্রিয়ার মাধ্যমে আমার প্যান কার্ডের আবেদন করতে সম্মত। (I agree to apply for PAN via e-KYC process).",
-                          "আবেদনের ৩-৫ কার্যদিবসের মধ্যে ই-প্যান কার্ডটি ইমেইলে প্রদান করা হবে। (e-PAN will be delivered within 3-5 working days).",
-                          "ই-প্যান আবেদনের জন্য মোট ১০৭/- টাকা (GST সহ) চার্জ প্রযোজ্য হবে। (Total charge Rs 107/- incl GST for e-PAN application).",
-                          "NSDL সার্ভার প্রোটোকল মেনে তথ্য জমা দেওয়া হবে। (Submitting data according to NSDL protocols)."
-                        ].map((text, i) => (
-                          <div key={i} className="flex gap-3 md:gap-4 p-4 md:p-5 rounded-[1.2rem] md:rounded-[1.5rem] bg-white/5 border border-white/5 hover:border-[var(--accent-blue)]/20 transition-all group">
-                             <div className="w-5 h-5 rounded-full bg-[var(--accent-blue)]/10 flex items-center justify-center shrink-0 group-hover:bg-[var(--accent-blue)]/20 transition-colors">
-                               <CheckCircle2 size={12} className="text-[var(--accent-blue)]" />
-                             </div>
-                             <p className={`text-[10px] md:text-sm font-bold leading-relaxed ${i === 3 ? 'text-[var(--accent-green)]' : 'text-[var(--text-secondary)]'}`}>{text}</p>
-                          </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 overflow-y-auto px-2 custom-scrollbar pb-6">
+                        {services.map(s => (
+                          <ServiceCard key={s.id} service={s} isSelected={selectedService?.id === s.id} onSelect={setSelectedService} />
                         ))}
                       </div>
 
-                      <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex">
-                        <button 
-                          onClick={() => setCurrentStep(1)}
-                          className="w-full md:w-auto px-10 py-4 md:py-5 bg-[var(--accent-blue)] text-white font-black rounded-xl md:rounded-3xl shadow-[0_20px_40px_-10px_rgba(0,209,255,0.3)] transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] md:text-[11px] ml-auto"
-                        >
-                          Accept & Initialize <ArrowRight size={18} />
-                        </button>
-                      </div>
+                      <button 
+                         onClick={() => setCurrentStep(1)} 
+                         disabled={!selectedService}
+                         className="mt-8 w-full py-6 md:py-8 bg-[var(--accent-blue)] text-white rounded-3xl font-black text-xl uppercase tracking-widest shadow-xl flex items-center justify-center gap-4 disabled:opacity-20 disabled:grayscale transition-all hover:scale-105 active:scale-95"
+                      >
+                         পরের ধাপ (Next) <ArrowRight size={28} />
+                      </button>
                     </motion.div>
-                  )}
+                )}
 
-                  {currentStep === 1 && (
-                    <motion.div
-                      key="step1"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      className="flex-1 flex flex-col"
-                    >
-                      <div className="mb-6 md:mb-10">
-                        <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
-                          Identity Enrollment
-                        </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Subject Identification Nodes</p>
-                      </div>
+                {currentStep === 1 && (
+                    <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-1 flex flex-col">
+                       <div className="text-center mb-10">
+                          <h1 className="text-4xl font-black tracking-tighter text-[var(--text-primary)] font-serif italic mb-2">দিন ও সময় বাছুন</h1>
+                          <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[var(--text-secondary)]">আপনি কখন আমাদের কেন্দ্রে আসতে চান?</p>
+                       </div>
 
-                      <form id="appointment-form" onSubmit={handleSubmit(() => setCurrentStep(2))} className="flex-1 space-y-4 md:space-y-6 overflow-y-auto custom-scrollbar px-2 md:px-6 pr-4 md:pr-8 pb-4 md:pb-6 mt-1">
-                        <InputField 
-                          label="নাম (Full Identity)"
-                          placeholder="আপনার পূর্ণ নাম লিখুন (Legal Full Name)"
-                          icon={User}
-                          error={errors.fullName?.message}
-                          {...register("fullName")}
-                        />
+                       <div className="flex-1 space-y-12 overflow-y-auto pr-2 custom-scrollbar pb-6">
+                          <div className="flex gap-4 overflow-x-auto pb-4 px-2 no-scrollbar">
+                             {nextAvailableDates.map((date, i) => (
+                               <button 
+                                 key={i} 
+                                 onClick={() => setSelectedDate(date)} 
+                                 className={`min-w-[120px] p-6 rounded-[2.5rem] border-4 transition-all flex flex-col items-center gap-1 ${
+                                   selectedDate && isSameDay(date, selectedDate) ? 'border-[var(--accent-blue)] bg-[var(--accent-blue)] text-white shadow-xl' : 'border-white/5 bg-white/5'
+                                 }`}
+                               >
+                                  <span className="text-xs font-black uppercase opacity-60">{format(date, 'EEE')}</span>
+                                  <span className="text-3xl font-black italic">{format(date, 'dd')}</span>
+                               </button>
+                             ))}
+                          </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-8 md:gap-y-6 pt-2">
-                          <InputField 
-                            label="আধার নম্বর (Aadhaar Number)"
-                            placeholder="XXXX XXXX XXXX"
-                            icon={CreditCard}
-                            error={errors.aadhaarNumber?.message}
-                            {...register("aadhaarNumber")}
-                          />
+                          <div className="px-2">
+                             <SlotPicker slots={slots} selectedSlot={selectedSlot} onSelect={setSelectedSlot} isLoading={isLoading} />
+                          </div>
+                       </div>
+
+                       <div className="mt-8 grid grid-cols-2 gap-4">
+                          <button onClick={() => setCurrentStep(0)} className="py-6 rounded-3xl bg-white/5 border border-white/10 font-black text-md tracking-widest uppercase">পেছনে যান</button>
+                          <button onClick={() => setCurrentStep(2)} disabled={!selectedSlot} className="py-6 rounded-3xl bg-[var(--accent-blue)] text-white shadow-xl font-black text-md tracking-widest uppercase flex items-center justify-center gap-3 disabled:opacity-20">এগিয়ে যান <ArrowRight size={24} /></button>
+                       </div>
+                    </motion.div>
+                )}
+
+                {currentStep === 2 && (
+                    <motion.div key="step2" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex-1 flex flex-col">
+                       <div className="text-center mb-10">
+                          <h1 className="text-4xl font-black tracking-tighter text-[var(--text-primary)] font-serif italic mb-2">আপনার নাম দিন</h1>
+                          <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[var(--text-secondary)]">আপনার নাম এবং মোবাইল নম্বর এখানে লিখুন</p>
+                       </div>
+
+                       <div className="flex-1 max-w-md mx-auto w-full space-y-10">
+                          <div className="space-y-4">
+                            <InputField label="নাম (Full Name)" placeholder="নাম লিখুন..." icon={User} {...register("fullName")} />
+                            <VoiceInput onTranscript={(t) => setValue("fullName", t)} placeholder="মুখে নাম বলুন" />
+                          </div>
+
+                          <InputField label="মোবাইল নম্বর (Phone)" placeholder="১০ সংখ্যার নম্বর" icon={Smartphone} {...register("phone")} />
                           
-                          <InputField 
-                            label="ফোন নম্বর (Contact)"
-                            placeholder="10 digit mobile"
-                            icon={Smartphone}
-                            error={errors.phone?.message}
-                            {...register("phone")}
-                          />
-                        </div>
+                          <div className="space-y-4 pt-4 border-t border-white/10">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 px-6">অন্যান্য তথ্য (Notes)</label>
+                            <VoiceInput onTranscript={(t) => setValue("notes", t)} placeholder="মুখে তথ্য বলুন" />
+                            <textarea {...register("notes")} placeholder="কিছু বলতে চাইলে এখানে লিখুন..." className="w-full bg-white/5 border-2 border-white/10 rounded-2xl p-6 text-sm font-bold text-white focus:outline-none focus:border-[var(--accent-blue)]" rows={3} />
+                          </div>
+                       </div>
 
-                        <InputField 
-                          label="Email Address (Optional)"
-                          placeholder="your@email.com"
-                          icon={Mail}
-                          error={errors.email?.message}
-                          {...register("email")}
-                        />
-                      </form>
-
-                      <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex flex-col md:flex-row gap-3">
-                        <GlassBackButton 
-                          onClick={() => setCurrentStep(0)}
-                          className="order-2 md:order-1"
-                        >
-                          Back
-                        </GlassBackButton>
-                        <button 
-                          form="appointment-form"
-                          type="submit"
-                          className="w-full md:w-auto px-10 py-4 md:py-5 bg-[var(--accent-blue)] text-white font-black rounded-xl md:rounded-3xl shadow-[0_20px_40px_-10px_rgba(0,209,255,0.3)] transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] md:text-[11px] ml-auto order-1 md:order-2"
-                        >
-                          Proceed to Assets <ArrowRight size={18} />
-                        </button>
-                      </div>
+                       <div className="mt-10 grid grid-cols-2 gap-4">
+                          <button onClick={() => setCurrentStep(1)} className="py-6 rounded-3xl bg-white/5 border border-white/10 font-black text-md tracking-widest uppercase text-white/40">পেছনে যান</button>
+                          <button onClick={() => setCurrentStep(3)} className="py-6 rounded-3xl bg-[var(--accent-blue)] text-white shadow-xl font-black text-md tracking-widest uppercase flex items-center justify-center gap-3">মিলিয়ে দেখুন <ArrowRight size={24} /></button>
+                       </div>
                     </motion.div>
-                  )}
+                )}
 
-                  {currentStep === 2 && (
-                    <motion.div
-                      key="step2"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      className="flex-1 flex flex-col"
-                    >
-                      <div className="mb-6 md:mb-8">
-                        <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: 'var(--liquid-text-shadow)' }}>
-                          Asset Dispatch
-                        </h3>
-                        <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2 md:mt-3">Document Verification Grid</p>
-                      </div>
+                {currentStep === 3 && (
+                   <motion.div key="step3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col text-center">
+                       <div className="mb-12">
+                          <h1 className="text-4xl font-black tracking-tighter text-[var(--text-primary)] font-serif italic mb-2">সব মিলিয়ে দেখুন</h1>
+                          <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[var(--text-secondary)]">বুকিং সম্পন্ন করার আগে একবার দেখুন</p>
+                       </div>
 
-                      <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 md:pr-2 pb-4 md:pb-6">
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 mt-2">
-                           {(['photo', 'signature', 'aadhaarDoc', 'additionalDoc', 'annexureA'] as const).map((docId) => {
-                              const labels: Record<string, string> = {
-                                photo: 'আপনার ছবি',
-                                signature: 'আপনার স্বাক্ষর',
-                                aadhaarDoc: 'আধার কার্ড',
-                                additionalDoc: 'অতিরিক্ত নথি',
-                                annexureA: 'Anuxre -A'
-                              };
-                              const subs: Record<string, string> = {
-                                photo: 'Photo',
-                                signature: 'Signature',
-                                aadhaarDoc: 'Aadhaar',
-                                additionalDoc: 'Additional',
-                                annexureA: 'Annexure-A'
-                              };
-                              const isRequired = docId !== 'annexureA';
-                              
-                              return (
-                                <label 
-                                  key={docId}
-                                  className={`aspect-square relative overflow-hidden bg-white/5 border-2 border-dashed ${uploadedFiles[docId] ? 'border-[var(--accent-green)] text-[var(--accent-green)]' : isRequired ? 'border-[var(--accent-saffron)]/30 text-[var(--text-tertiary)] hover:border-[var(--accent-saffron)]' : 'border-white/10 text-[var(--text-tertiary)] hover:border-[var(--accent-blue)]'} rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all cursor-pointer p-4 md:p-6 text-center group liquid-glass-button`}
-                                >
-                                  {uploadedFiles[docId] ? <FileCheck size={32} className="md:size-10" /> : <Upload size={32} className="md:size-10 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500" />}
-                                  <span className="text-[9px] md:text-xs font-black mt-3 md:mt-4 border-t border-white/5 pt-2 md:pt-3 w-full">
-                                    {labels[docId]} 
-                                    {isRequired && <span className="text-[var(--accent-saffron)] ml-1">*</span>}
-                                    <br/>
-                                    <span className="text-[7px] md:text-[9px] opacity-70 font-bold uppercase tracking-widest block mt-1">({subs[docId]})</span>
-                                  </span>
-                                  <input 
-                                    type="file" 
-                                    className="hidden" 
-                                    accept="image/*,application/pdf"
-                                    onChange={() => handleFileUpload(docId)}
-                                  />
-                                </label>
-                              );
-                           })}
-                        </div>
-                      </div>
+                       <div className="max-w-md mx-auto w-full space-y-6 bg-white/5 p-10 rounded-[3rem] border border-white/10 text-left">
+                          <div className="flex justify-between border-b border-white/10 pb-4">
+                             <span className="text-[10px] font-black uppercase tracking-widest opacity-40">পরিষেবা (Work):</span>
+                             <span className="text-sm font-black text-[var(--accent-blue)]">{selectedService?.name}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-white/10 pb-4">
+                             <span className="text-[10px] font-black uppercase tracking-widest opacity-40">দিন ও সময়:</span>
+                             <span className="text-sm font-black">{selectedDate && format(selectedDate, "dd MMM")} | {selectedSlot?.start}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-white/10 pb-4">
+                             <span className="text-[10px] font-black uppercase tracking-widest opacity-40">টাকা (Charge):</span>
+                             <span className="text-lg font-black italic text-emerald-400">₹{selectedService?.price}</span>
+                          </div>
+                       </div>
 
-                      <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex flex-col md:flex-row gap-3">
-                        <GlassBackButton 
-                          onClick={() => setCurrentStep(1)}
-                        >
-                          Identity
-                        </GlassBackButton>
-                        <button 
-                          onClick={handleSubmit(onFinalSubmit)}
-                          disabled={isSubmitting || !isDocsStepValid}
-                          className={`w-full md:w-auto px-10 py-4 md:py-5 ${isDocsStepValid ? 'bg-[var(--accent-green)] shadow-[0_20px_40px_-10px_rgba(0,255,148,0.3)]' : 'bg-white/5 opacity-40'} text-white font-black rounded-xl md:rounded-3xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] md:text-[11px] ml-auto order-1 md:order-2`}
-                        >
-                          {isSubmitting ? "Processing Flow..." : "Initialize Booking"} <ArrowRight size={18} />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
+                       <div className="mt-12 grid grid-cols-2 gap-4">
+                          <button onClick={() => setCurrentStep(2)} className="py-6 rounded-3xl bg-white/5 border border-white/10 font-black text-md tracking-widest uppercase text-white/40">ঠিক করুন</button>
+                          <button onClick={() => setCurrentStep(4)} className="py-6 rounded-3xl bg-emerald-500 text-white shadow-xl font-black text-md tracking-widest uppercase flex items-center justify-center gap-3">ঠিক আছে <ArrowRight size={24} /></button>
+                       </div>
+                   </motion.div>
+                )}
 
-                  {currentStep === 3 && (
-                    <motion.div
-                      key="step3"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full px-2"
-                    >
-                       {!currentApp || (currentApp.otpStatus === 'None') ? (
-                         <div className="space-y-6 md:space-y-10 text-center">
-                            <motion.div 
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: "spring", damping: 15 }}
-                              className="w-24 h-24 md:w-32 md:h-32 bg-[var(--accent-green)]/10 rounded-[2rem] md:rounded-[3rem] border border-[var(--accent-green)]/20 flex items-center justify-center mx-auto shadow-[0_32px_64px_-16px_rgba(0,255,148,0.2)] relative"
-                            >
-                                <CheckCircle2 size={40} className="md:size-14 text-[var(--accent-green)] z-10" />
-                                <div className="absolute inset-0 bg-[var(--accent-green)]/20 blur-2xl animate-pulse" />
-                            </motion.div>
-                            
-                            <div className="space-y-2 md:space-y-4">
-                               <h3 className="text-2xl md:text-5xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter" style={{ textShadow: 'var(--liquid-text-shadow)' }}>আবেদন জমা হয়েছে</h3>
-                               <p className="text-[8px] md:text-[10px] text-[var(--accent-green)] font-black uppercase tracking-[0.4em]">Tracking ID: #{submittedAppId?.split('-').pop()}</p>
-                            </div>
+                {currentStep === 4 && (
+                   <motion.div key="step4" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex-1 flex flex-col justify-center items-center">
+                       <div className="w-40 h-40 bg-[var(--accent-blue)]/10 rounded-[4rem] border border-[var(--accent-blue)]/20 flex items-center justify-center mb-10 shadow-2xl relative">
+                          <PaymentIcon size={64} className="text-[var(--accent-blue)] z-10" />
+                          <div className="absolute inset-0 bg-[var(--accent-blue)]/20 blur-3xl animate-pulse" />
+                       </div>
+                       <h2 className="text-4xl font-black tracking-tighter text-white font-serif italic mb-4">বুকিং সম্পন্ন করুন</h2>
+                       <button onClick={handleSubmit(onFinalSubmit)} disabled={isFinalizing} className="px-16 py-8 bg-[var(--accent-blue)] text-white rounded-3xl font-black text-2xl uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4">
+                          {isFinalizing ? "অপেক্ষা করুন..." : "কনফার্ম করুন (Confirm)"}
+                       </button>
+                   </motion.div>
+                )}
 
-                            <p className="text-[12px] md:text-sm text-[var(--text-secondary)] font-bold max-w-xs md:max-w-sm mx-auto leading-relaxed">
-                                আপনার নথিগুলি যাচাই করা হচ্ছে। শীঘ্রই আমাদের পক্ষ থেকে ওটিপি (OTP) প্রোটোকল শুরু করা হবে।
-                            </p>
-
-                            <div className="bg-white/5 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/10 inline-flex items-center gap-3 md:gap-4 px-6 md:px-10">
-                                <div className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
-                                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[var(--text-primary)]/40">Waiting for Operator Response...</span>
-                            </div>
-                         </div>
-                       ) : (
-                         <div className="space-y-6 md:space-y-10">
-                            <div className="text-center space-y-4 md:space-y-6">
-                                <div className="w-20 h-20 md:w-24 md:h-24 bg-[var(--accent-blue)]/10 rounded-2xl md:rounded-[2.5rem] border border-[var(--accent-blue)]/20 flex items-center justify-center mx-auto shadow-[0_32px_64px_-16px_rgba(0,209,255,0.3)]">
-                                    <Smartphone size={32} className="md:size-10 text-[var(--accent-blue)]" />
-                                </div>
-                                <div>
-                                    <h3 className="text-2xl md:text-4xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter" style={{ textShadow: 'var(--liquid-text-shadow)' }}>ওটিপি কোড লিখুন</h3>
-                                    <p className="text-[8px] md:text-[10px] text-[var(--accent-blue)] font-black uppercase tracking-[0.4em] mt-1 md:mt-2">Mobile Verification Layer</p>
-                                </div>
-                            </div>
-
-                            <div className="max-w-sm mx-auto space-y-4 md:space-y-6">
-                                <div className="relative group">
-                                  <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-[var(--accent-blue)]/50 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                                  <input 
-                                     maxLength={6}
-                                     value={otpValue}
-                                     onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ""))}
-                                     placeholder="000 000"
-                                     className="w-full bg-white/5 border-2 border-white/10 rounded-2xl md:rounded-3xl px-4 py-6 md:px-6 md:py-8 text-center text-3xl md:text-5xl font-black tracking-[0.3em] md:tracking-[0.4em] focus:outline-none focus:border-[var(--accent-blue)]/50 focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all text-[var(--text-primary)] font-mono liquid-glass-button"
-                                  />
-                                </div>
-
-                                {currentApp.otpStatus === 'Incorrect' && (
-                                   <div className="bg-red-500/10 border border-red-500/20 p-3 md:p-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-2 md:gap-3 text-red-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest animate-shake">
-                                      <AlertCircle size={14} /> ভুল ওটিপি দেওয়া হয়েছে (Incorrect OTP)
-                                   </div>
-                                )}
-
-                                <button 
-                                   onClick={handleOtpSubmit}
-                                   disabled={otpValue.length !== 6 || currentApp.otpStatus === 'Submitted'}
-                                   className="w-full bg-[var(--accent-blue)] text-white font-black py-4 md:py-6 rounded-xl md:rounded-2xl shadow-[0_24px_48px_-12px_rgba(0,209,255,0.4)] transition-all hover:scale-[1.02] active:scale-95 text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em]"
-                                >
-                                   {currentApp.otpStatus === 'Submitted' ? 'যাচাই করা হচ্ছে...' : 'প্রমাণীকরণ সম্পন্ন করুন'}
-                                </button>
-                            </div>
-                         </div>
-                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-            </div>
+                {currentStep === 5 && (
+                   <motion.div key="success" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex-1 flex flex-col items-center justify-center text-center">
+                       <div className="w-48 h-48 bg-emerald-500/10 rounded-[5rem] border border-emerald-500/20 flex items-center justify-center mb-10 shadow-2xl">
+                          <CheckCircle2 size={96} className="text-emerald-500" />
+                       </div>
+                       <h1 className="text-5xl font-black tracking-tighter text-white font-serif italic mb-4">সফল হয়েছে!</h1>
+                       <div className="px-8 py-3 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-8">
+                          <span className="text-xs font-black uppercase text-emerald-500 tracking-widest">বুকিং নম্বর: {bookingId}</span>
+                       </div>
+                       <p className="text-lg font-bold text-white/60 max-w-md mx-auto mb-12">আপনার বুকিং সফল হয়েছে। নির্দিষ্ট সময়ে সেন্টারে চলে আসুন।</p>
+                       <Link href="/track">
+                         <button className="px-12 py-6 bg-white text-black rounded-3xl font-black text-xs uppercase tracking-[0.4em] shadow-2xl">বুকিং দেখুন</button>
+                       </Link>
+                   </motion.div>
+                )}
+             </AnimatePresence>
           </div>
         </div>
       </div>
