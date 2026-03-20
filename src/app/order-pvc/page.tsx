@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,31 +11,30 @@ import {
   ShieldCheck,
   CreditCard,
   User,
-  RotateCcw,
+  LogIn,
 } from "lucide-react";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useRef, type ChangeEvent } from "react";
 import Link from "next/link";
 import { useAdminStore } from "@/lib/store/useAdminStore";
 import GlassBackButton from "@/components/GlassBackButton";
-import AadhaarCard from "@/components/AadhaarCard";
+import { signInWithPopup } from "firebase/auth";
+import { getFirebaseAuthClient, googleProvider, isFirebaseEnabled } from "@/lib/firebase/client";
 
 // ─── Card Type Config ────────────────────────────────────────────────────────
 
 type CardType = "aadhaar" | "pan" | "rc" | "dl" | "id";
+type DeliveryMode = "manual" | "google";
 
 const CARD_TYPES: { 
   value: CardType; 
   label: string; 
   labelBn: string; 
-  frontPath: string;
-  backPath: string;
-  accentColor: string; 
 }[] = [
-  { value: "aadhaar", label: "Aadhaar PVC Card", labelBn: "আধার পিভিসি কার্ড",  frontPath: "/images/templates/aadhar_front.png",  backPath: "/images/templates/aadhar_back.png",  accentColor: "#FF6B35" },
-  { value: "pan",     label: "PAN PVC Card",     labelBn: "প্যান পিভিসি কার্ড",  frontPath: "/images/templates/pan_front.png",    backPath: "/images/templates/pan_back.png",    accentColor: "#38ef7d" },
-  { value: "rc",      label: "Ration PVC Card",  labelBn: "ডিজিটাল রেশন কার্ড", frontPath: "/images/templates/rason_front.png",   backPath: "/images/templates/rason_back.png",   accentColor: "#3b82f6" },
-  { value: "dl",      label: "DL PVC Card",      labelBn: "ড্রাইভিং লাইসেন্স",  frontPath: "/images/templates/dl_front.png",     backPath: "/images/templates/dl_back.png",     accentColor: "#71b280" },
-  { value: "id",      label: "ID Card",          labelBn: "আইডি কার্ড",         frontPath: "/images/templates/id_card.png",      backPath: "/images/templates/id_back.png",     accentColor: "#0b8793" },
+  { value: "aadhaar", label: "Aadhaar PVC Card", labelBn: "আধার পিভিসি কার্ড" },
+  { value: "pan",     label: "PAN PVC Card",     labelBn: "প্যান পিভিসি কার্ড" },
+  { value: "rc",      label: "Ration PVC Card",  labelBn: "ডিজিটাল রেশন কার্ড" },
+  { value: "dl",      label: "DL PVC Card",      labelBn: "ড্রাইভিং লাইসেন্স" },
+  { value: "id",      label: "ID Card",          labelBn: "আইডি কার্ড" },
 ];
 
 const CARD_TYPE_LABELS: Record<CardType, string> = {
@@ -46,97 +45,21 @@ const CARD_TYPE_LABELS: Record<CardType, string> = {
   id:      "আইডি কার্ড",
 };
 
-const CARD_TYPE_NUMBERS: Record<CardType, string> = {
-  aadhaar: "XXXX XXXX XXXX",
-  pan:     "XXXXX XXXX X",
-  rc:      "SPHH 1234567890",
-  dl:      "DL-XXXXXXXXXX",
-  id:      "ID-XXXXXXXX",
-};
-
-// ─── Utils ──────────────────────────────────────────────────────────────────
-
-const autoFontSize = (text: string) => {
-  if (!text) return "12px";
-  if (text.length > 25) return "9px";
-  if (text.length > 20) return "10px";
-  if (text.length > 15) return "11px";
-  return "12px";
+const CARD_TYPE_IMAGES: Record<CardType, { front: string; back: string }> = {
+  aadhaar: { front: "/images/templates/aadhar_front.png", back: "/images/templates/aadhar_back.png" },
+  pan: { front: "/images/templates/pan_front.png", back: "/images/templates/pan_back.png" },
+  rc: { front: "/images/templates/rason_front.png", back: "/images/templates/rason_back.png" },
+  dl: { front: "/images/templates/dl_front.png", back: "/images/templates/dl_back.png" },
+  id: { front: "/images/templates/id_card.png", back: "/images/templates/id_back.png" },
 };
 
 // ─── Steps ───────────────────────────────────────────────────────────────────
 
 const steps = [
   { id: "terms",  title: "শর্তাবলী",      icon: ShieldCheck, sub: "নিবন্ধন চুক্তি" },
-  { id: "order",  title: "অর্ডার বিবরণ",  icon: CreditCard,  sub: "লাইভ প্রিভিউ"    },
+  { id: "order",  title: "অর্ডার বিবরণ",  icon: CreditCard,  sub: "ফর্ম পূরণ"    },
   { id: "verify", title: "যাচাইকরণ",      icon: Smartphone,  sub: "সুরক্ষা প্রোটোকল" },
 ];
-
-// ─── PVC Card Preview Component ──────────────────────────────────────────────
-
-function PvcCardPreview({
-  name,
-  cardType,
-  photoUrl,
-}: {
-  name: string;
-  cardType: CardType;
-  photoUrl: string | null;
-}) {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const config = CARD_TYPES.find((c) => c.value === cardType)!;
-
-  const displayName = name || "Rajesh Kumar";
-  // When card type changes, reset to front
-  useEffect(() => { setIsFlipped(false); }, [cardType]);
-
-  const currentImg = isFlipped ? config.backPath : config.frontPath;
-
-  return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Flip Toggle */}
-      <button
-        onClick={() => setIsFlipped((p) => !p)}
-        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[var(--text-tertiary)] hover:text-[var(--accent-blue)] transition-all px-3 py-1.5 rounded-full border border-white/10 hover:border-[var(--accent-blue)]/30 bg-white/5 active:scale-95"
-      >
-        <RotateCcw size={11} className={isFlipped ? "rotate-180 transition-transform duration-500" : "transition-transform duration-500"} />
-        {isFlipped ? "Show Front" : "Show Back"}
-      </button>
-
-      {/* Card — simple image swap */}
-      <div className="relative select-none w-full max-w-[360px]" style={{ aspectRatio: "1.586 / 1" }}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentImg}
-            initial={{ opacity: 0, rotateY: isFlipped ? -90 : 90 }}
-            animate={{ opacity: 1, rotateY: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="absolute inset-0 rounded-[1.4rem] overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.4)] ring-1 ring-white/10 cursor-pointer"
-            onClick={() => setIsFlipped((p) => !p)}
-          >
-            <img
-              src={currentImg}
-              alt={isFlipped ? "Card Back" : "Card Front"}
-              className="w-full h-full object-contain"
-              style={{ background: "#f5f5f5" }}
-            />
-            {/* Shimmer */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ background: "linear-gradient(135deg, white 0%, transparent 50%, white 100%)" }} />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Badge */}
-      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
-        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: config.accentColor }} />
-        <span className="text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)]">
-          {isFlipped ? "ব্যাক সাইড" : "ফ্রন্ট সাইড"} • {config.labelBn}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -150,12 +73,25 @@ export default function OrderPvcPage() {
   const [checkedTerms, setCheckedTerms] = useState<number[]>([]);
   const verifiedTermCount = checkedTerms.length;
 
-  // Order form state (live preview state)
-  const [cardName,   setCardName]   = useState("");
+  // Order form state
   const [cardType,   setCardType]   = useState<CardType>("aadhaar");
+  const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
+  const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>("manual");
 
   const [photoUrl,   setPhotoUrl]   = useState<string | null>(null);
   const [docUploaded, setDocUploaded] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+  const [addressLine, setAddressLine] = useState("");
+  const [alternatePhone, setAlternatePhone] = useState("");
+  const [googleUser, setGoogleUser] = useState<{
+    uid: string;
+    displayName: string;
+    email: string;
+    phoneNumber: string;
+  } | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
 
@@ -166,33 +102,135 @@ export default function OrderPvcPage() {
   );
 
   // Photo preview handler
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
     setPhotoUrl(url);
   };
 
+  const normalizePhone = (value: string) => value.replace(/\D/g, "").slice(0, 10);
+
+  const handleGoogleSignIn = async () => {
+    setFormError(null);
+    if (!isFirebaseEnabled) {
+      setFormError("Firebase configuration missing. Add NEXT_PUBLIC_FIREBASE_* values in .env and restart server.");
+      return;
+    }
+
+    const auth = getFirebaseAuthClient();
+    if (!auth || !googleProvider) {
+      setFormError("Firebase Auth is not initialized correctly.");
+      return;
+    }
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const nextMobile = normalizePhone(user.phoneNumber ?? "");
+
+      setGoogleUser({
+        uid: user.uid,
+        displayName: user.displayName ?? "",
+        email: user.email ?? "",
+        phoneNumber: nextMobile,
+      });
+
+      if (user.displayName) setCustomerName(user.displayName);
+      if (nextMobile) {
+        setMobileNumber(nextMobile);
+        if (!whatsappNumber) setWhatsappNumber(nextMobile);
+      }
+    } catch (error) {
+      console.error("Google sign-in failed:", error);
+      setFormError("Google sign-in failed. Verify Firebase API key/domain and authorized domains.");
+    }
+  };
+
+  const isManualReady =
+    customerName.trim().length >= 2 &&
+    mobileNumber.length === 10 &&
+    whatsappNumber.length === 10 &&
+    addressLine.trim().length >= 8 &&
+    alternatePhone.length === 10;
+
+  const isGoogleReady =
+    !!googleUser &&
+    customerName.trim().length >= 2 &&
+    mobileNumber.length === 10 &&
+    whatsappNumber.length === 10 &&
+    addressLine.trim().length >= 8;
+
+  const canSubmit = docUploaded && (deliveryMode === "manual" ? isManualReady : isGoogleReady);
+
 
   const onFinalSubmit = async () => {
+    setFormError(null);
+
+    if (!canSubmit) {
+      setFormError("সব প্রয়োজনীয় তথ্য পূরণ করুন।");
+      return;
+    }
+
     setIsSubmitting(true);
-    const appId = `PVC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    addPanApplication({
-      client: cardName || "Walk-in Customer",
-      phone: "0000000000",
-      type: `PVC Card – ${CARD_TYPE_LABELS[cardType]}`,
-      source: "Portal Submission",
-      status: "Verification Required",
-      otpStatus: "None",
-      photo: "pvc_attachment",
-      signature: "pvc_attachment",
-      aadhaarDoc: "pvc_attachment",
-      additionalDoc: "pvc_attachment",
-    });
-    setSubmittedAppId(appId);
-    await new Promise((r) => setTimeout(r, 2000));
-    setIsSubmitting(false);
-    setCurrentStep(2);
+    try {
+      const response = await fetch("/api/pvc-orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cardType,
+          deliveryMode,
+          customer: {
+            name: customerName.trim(),
+            mobileNumber,
+            whatsappNumber,
+            address: addressLine.trim(),
+            alternatePhoneNumber: alternatePhone,
+          },
+          googleUser: googleUser
+            ? {
+                uid: googleUser.uid,
+                email: googleUser.email,
+                displayName: googleUser.displayName,
+                phoneNumber: googleUser.phoneNumber,
+              }
+            : undefined,
+          photoUploaded: !!photoUrl,
+          documentUploaded: docUploaded,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result?.ok) {
+        const detailedError = result?.details
+          ? `${result?.error ?? "সার্ভারে ডাটা সেভ হয়নি।"} (${result.details})`
+          : result?.error ?? "সার্ভারে ডাটা সেভ হয়নি।";
+        setFormError(detailedError);
+        setIsSubmitting(false);
+        return;
+      }
+
+      addPanApplication({
+        client: customerName.trim(),
+        phone: mobileNumber,
+        type: `PVC Card – ${CARD_TYPE_LABELS[cardType]}`,
+        source: deliveryMode === "google" ? "Google Auth Portal" : "Manual Portal Submission",
+        status: "Verification Required",
+        otpStatus: "None",
+        photo: photoUrl ? "uploaded" : "not_uploaded",
+        signature: "pvc_attachment",
+        aadhaarDoc: docUploaded ? "uploaded" : "not_uploaded",
+        additionalDoc: "pvc_attachment",
+      });
+
+      setSubmittedAppId(String(result.orderId));
+      setCurrentStep(2);
+    } catch (error) {
+      console.error("PVC order submit failed:", error);
+      setFormError("সার্ভারে সংযোগ সমস্যা। পরে আবার চেষ্টা করুন।");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleOtpSubmit = () => {
@@ -375,21 +413,133 @@ export default function OrderPvcPage() {
                   </motion.div>
                 )}
 
-                {/* ═══ STEP 1 – Order Form + Live Preview ═══ */}
+                {/* ═══ STEP 1 – Order Form ═══ */}
                 {currentStep === 1 && (
                   <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-1 flex flex-col">
                     <div className="mb-6 md:mb-8">
                       <h3 className="text-2xl md:text-4xl font-black text-[var(--text-primary)] font-serif uppercase tracking-tighter leading-tight" style={{ textShadow: "var(--liquid-text-shadow)" }}>
                         অর্ডার বিবরণ
                       </h3>
-                      <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2">লাইভ কার্ড প্রিভিউ সিস্টেম</p>
+                      <p className="text-[9px] md:text-[10px] text-[var(--text-primary)]/80 font-black uppercase tracking-[0.3em] mt-2">সিম্পল ফর্ম — দ্রুত ফিলআপ</p>
                     </div>
 
-                    {/* ── Split Layout: Form (left) | Preview (right) ── */}
-                    <div className="flex-1 flex flex-col-reverse md:flex-row gap-6 md:gap-8 overflow-y-auto custom-scrollbar">
-
-                      {/* LEFT – Form Fields */}
+                    <div className="flex-1 flex flex-col md:flex-row gap-6 md:gap-8 overflow-y-auto custom-scrollbar">
                       <div className="md:flex-1 space-y-4 md:space-y-5 min-w-0">
+                        <div>
+                          <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[var(--text-primary)]/60 ml-1 mb-2 block">
+                            ডেলিভারি তথ্য পদ্ধতি
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setDeliveryMode("manual")}
+                              className={`h-14 px-4 rounded-2xl border-2 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+                                deliveryMode === "manual"
+                                  ? "border-[var(--accent-blue)] bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]"
+                                  : "border-white/10 bg-white/5 text-[var(--text-tertiary)] hover:border-white/20"
+                              }`}
+                            >
+                              <User size={16} />
+                              Manual Entry
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeliveryMode("google")}
+                              className={`h-14 px-4 rounded-2xl border-2 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+                                deliveryMode === "google"
+                                  ? "border-[var(--accent-blue)] bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]"
+                                  : "border-white/10 bg-white/5 text-[var(--text-tertiary)] hover:border-white/20"
+                              }`}
+                            >
+                              <LogIn size={16} />
+                              Google Sign-In
+                            </button>
+                          </div>
+                        </div>
+
+                        {deliveryMode === "google" && (
+                          <div className="space-y-3">
+                            <button
+                              type="button"
+                              onClick={handleGoogleSignIn}
+                              className="w-full h-14 px-4 rounded-2xl border-2 border-white/10 bg-white/5 hover:border-[var(--accent-blue)]/50 text-[var(--text-primary)] font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-3"
+                            >
+                              <LogIn size={16} />
+                              {googleUser ? "Google Account Connected" : "Sign in with Google"}
+                            </button>
+                            {googleUser && (
+                              <div className="p-3 rounded-2xl bg-[var(--accent-green)]/10 border border-[var(--accent-green)]/20 text-[10px] font-bold text-[var(--accent-green)]">
+                                {googleUser.displayName || "Google User"} ({googleUser.email || "No email"})
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="sm:col-span-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--text-primary)]/60 ml-1 mb-2 block">
+                              Name
+                            </label>
+                            <input
+                              value={customerName}
+                              onChange={(e) => setCustomerName(e.target.value)}
+                              placeholder="Full Name"
+                              className="w-full h-12 px-4 rounded-2xl border-2 border-white/10 bg-white/5 text-[var(--text-primary)] text-sm font-bold focus:outline-none focus:border-[var(--accent-blue)]/50 focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--text-primary)]/60 ml-1 mb-2 block">
+                              Mobile No
+                            </label>
+                            <input
+                              value={mobileNumber}
+                              onChange={(e) => setMobileNumber(normalizePhone(e.target.value))}
+                              placeholder="10-digit number"
+                              inputMode="numeric"
+                              className="w-full h-12 px-4 rounded-2xl border-2 border-white/10 bg-white/5 text-[var(--text-primary)] text-sm font-bold focus:outline-none focus:border-[var(--accent-blue)]/50 focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--text-primary)]/60 ml-1 mb-2 block">
+                              WhatsApp No
+                            </label>
+                            <input
+                              value={whatsappNumber}
+                              onChange={(e) => setWhatsappNumber(normalizePhone(e.target.value))}
+                              placeholder="10-digit number"
+                              inputMode="numeric"
+                              className="w-full h-12 px-4 rounded-2xl border-2 border-white/10 bg-white/5 text-[var(--text-primary)] text-sm font-bold focus:outline-none focus:border-[var(--accent-blue)]/50 focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all"
+                            />
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--text-primary)]/60 ml-1 mb-2 block">
+                              Address
+                            </label>
+                            <textarea
+                              value={addressLine}
+                              onChange={(e) => setAddressLine(e.target.value)}
+                              placeholder="Delivery address"
+                              rows={3}
+                              className="w-full p-4 rounded-2xl border-2 border-white/10 bg-white/5 text-[var(--text-primary)] text-sm font-bold focus:outline-none focus:border-[var(--accent-blue)]/50 focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all resize-none"
+                            />
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--text-primary)]/60 ml-1 mb-2 block">
+                              Alternative Phone Number
+                            </label>
+                            <input
+                              value={alternatePhone}
+                              onChange={(e) => setAlternatePhone(normalizePhone(e.target.value))}
+                              placeholder="10-digit number"
+                              inputMode="numeric"
+                              className="w-full h-12 px-4 rounded-2xl border-2 border-white/10 bg-white/5 text-[var(--text-primary)] text-sm font-bold focus:outline-none focus:border-[var(--accent-blue)]/50 focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all"
+                            />
+                          </div>
+                        </div>
 
                         {/* Card Type */}
                         <div>
@@ -414,19 +564,6 @@ export default function OrderPvcPage() {
                           </div>
                         </div>
 
-                        {/* Name */}
-                        <div>
-                          <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[var(--text-primary)]/60 ml-1 mb-2 block">
-                            কার্ডে নাম
-                          </label>
-                          <input
-                            type="text"
-                            value={cardName}
-                            onChange={(e) => setCardName(e.target.value)}
-                            placeholder="আপনার নাম লিখুন…"
-                            className="w-full h-14 px-4 rounded-2xl border-2 border-white/10 bg-white/5 text-[var(--text-primary)] font-bold text-sm placeholder:text-[var(--text-tertiary)] placeholder:font-normal focus:outline-none focus:border-[var(--accent-blue)]/50 focus:ring-4 focus:ring-[var(--accent-blue)]/10 transition-all hover:border-white/20"
-                          />
-                        </div>
 
                          {/* Photo Upload */}
                          <div>
@@ -482,17 +619,51 @@ export default function OrderPvcPage() {
                         </div>
                       </div>
 
-                      {/* RIGHT – Live Preview */}
-                      <div className="md:w-auto flex items-start justify-center md:sticky md:top-0">
-                        <div className="flex flex-col items-center gap-4 w-full">
-                          <PvcCardPreview
-                            name={cardName}
-                            cardType={cardType}
-                            photoUrl={photoUrl}
-                          />
+                      {/* RIGHT – Card Preview */}
+                      <div className="md:w-[360px] flex items-start justify-center md:sticky md:top-2">
+                        <div className="w-full space-y-3">
+                          <div className="flex items-center justify-between px-3">
+                            <div className="text-[10px] font-black uppercase tracking-widest text-[var(--text-tertiary)]">
+                              কার্ড প্রিভিউ
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setIsPreviewFlipped((prev) => !prev)}
+                              className="text-[9px] font-black uppercase tracking-widest text-[var(--accent-blue)] hover:text-[var(--accent-blue)]/80 transition-colors"
+                            >
+                              {isPreviewFlipped ? "ফ্রন্ট দেখুন" : "ব্যাক দেখুন"}
+                            </button>
+                          </div>
+                          <div className="relative rounded-[1.6rem] overflow-hidden border border-white/10 bg-white/5 shadow-[0_24px_48px_-18px_rgba(0,0,0,0.45)]">
+                            <img
+                              src={isPreviewFlipped ? CARD_TYPE_IMAGES[cardType].back : CARD_TYPE_IMAGES[cardType].front}
+                              alt={`${CARD_TYPE_LABELS[cardType]} preview`}
+                              className="w-full h-full object-contain"
+                              style={{ background: "#f5f5f5" }}
+                            />
+                            {!isPreviewFlipped && (
+                              <div className="absolute inset-0 pointer-events-none">
+                                {photoUrl && (
+                                  <div className="absolute left-[10%] top-[20%] w-[22%] h-[38%] border border-black/10 shadow-sm overflow-hidden">
+                                    <img src={photoUrl} className="w-full h-full object-cover" alt="Preview" />
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-[9px] text-[var(--text-tertiary)] font-bold uppercase tracking-widest text-center">
+                            আপনি যা লিখবেন, ঠিক সেইভাবেই কার্ড প্রিন্ট হবে
+                          </div>
                         </div>
                       </div>
+
                     </div>
+
+                    {formError && (
+                      <div className="mt-4 p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-wider">
+                        {formError}
+                      </div>
+                    )}
 
                     {/* Action row */}
                     <div className="pt-6 md:pt-8 mt-4 md:mt-6 border-t border-white/10 flex flex-col md:flex-row gap-3">
@@ -501,8 +672,8 @@ export default function OrderPvcPage() {
                       </GlassBackButton>
                       <button
                         onClick={onFinalSubmit}
-                        disabled={isSubmitting || !docUploaded}
-                        className={`w-full md:w-auto px-10 py-4 md:py-5 ${docUploaded ? "bg-[var(--accent-green)] shadow-[0_20px_40px_-10px_rgba(0,255,148,0.3)] hover:scale-[1.02]" : "bg-white/5 opacity-40"} text-white font-black rounded-xl md:rounded-3xl transition-all active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] md:text-[11px] ml-auto`}
+                        disabled={isSubmitting || !canSubmit}
+                        className={`w-full md:w-auto px-10 py-4 md:py-5 ${canSubmit ? "bg-[var(--accent-green)] shadow-[0_20px_40px_-10px_rgba(0,255,148,0.3)] hover:scale-[1.02]" : "bg-white/5 opacity-40"} text-white font-black rounded-xl md:rounded-3xl transition-all active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] md:text-[11px] ml-auto`}
                       >
                         {isSubmitting ? "প্রক্রিয়াকরণ চলছে..." : "অর্ডার নিশ্চিত করুন"}
                         <ArrowRight size={18} />
