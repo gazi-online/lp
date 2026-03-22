@@ -14,10 +14,10 @@ import {
   Fingerprint,
   ShieldCheck,
   Store,
-  Wallet,
   Bolt,
 } from "lucide-react";
 import { addDays, format, isSameDay } from "date-fns";
+import { bn } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,6 +38,8 @@ type SlotItem = {
   end?: string;
   isAvailable: boolean;
 };
+
+type Language = "en" | "bn";
 
 const formSchema = z.object({
   fullName: z.string().min(2, "Please enter full name"),
@@ -60,17 +62,150 @@ const resolveIcon = (iconName?: string) => {
   }
 };
 
-const to12Hour = (time24: string) => {
+const to12Hour = (time24: string, language: Language) => {
   const [h, m] = time24.split(":").map(Number);
   const hour = h % 12 || 12;
-  const suffix = h >= 12 ? "PM" : "AM";
+  const suffix = language === "bn" ? (h >= 12 ? "অপরাহ্ণ" : "পূর্বাহ্ণ") : h >= 12 ? "PM" : "AM";
   return `${String(hour).padStart(2, "0")}:${String(m).padStart(2, "0")} ${suffix}`;
 };
 
 const formatPrice = (value: number) => `Rs.${value.toFixed(2)}`;
 
+const formErrorTranslations: Record<string, string> = {
+  "Please enter full name": "অনুগ্রহ করে পূর্ণ নাম লিখুন",
+  "Please enter a valid email": "অনুগ্রহ করে একটি সঠিক ইমেইল দিন",
+  "Enter a valid 10-digit mobile number": "১০ সংখ্যার সঠিক মোবাইল নম্বর দিন",
+};
+
+const serviceTranslations: Record<string, { name: string; description: string }> = {
+  "Aadhar/Mobile Update": {
+    name: "আধার/মোবাইল আপডেট",
+    description: "আপনার তথ্য হালনাগাদ করুন বা মোবাইল নম্বর নিরাপদভাবে অফিসিয়াল পোর্টালে লিঙ্ক করুন।",
+  },
+  "PAN Card": {
+    name: "প্যান কার্ড",
+    description: "নতুন প্যান আবেদন, সংশোধন বা রি-প্রিন্ট দ্রুত প্রক্রিয়াকরণ।",
+  },
+  "Life Certificate": {
+    name: "লাইফ সার্টিফিকেট",
+    description: "পেনশনারদের জন্য ডিজিটাল জীবন প্রমাণপত্র। দ্রুত ও কনট্যাক্টলেস ভেরিফিকেশন।",
+  },
+  "Digital Services": {
+    name: "ডিজিটাল সেবা",
+    description: "অনলাইন ফর্ম, প্রিন্ট, ডকুমেন্ট স্ক্যানসহ অন্যান্য ডিজিটাল কাজ।",
+  },
+};
+
+const translations = {
+  en: {
+    backStep: "Back Step",
+    backHome: "Back Home",
+    step: "Step",
+    selectService: "Select Service",
+    selectServiceDesc: "Please choose the digital assistance you require today.",
+    booking: "Booking",
+    pickTime: "Pick a Time",
+    selectDate: "Select Date",
+    availableSlots: "Available Slots",
+    morning: "Morning",
+    afternoon: "Afternoon",
+    selected: "Selected",
+    available: "Available",
+    booked: "Booked",
+    yourChoice: "Your Choice",
+    standardVisit: "Standard Shop Visit - 60 min",
+    confirmDetails: "Confirm Details",
+    confirmDetailsDesc: "Please review your journey details and provide contact information.",
+    guestInformation: "Guest Information",
+    fullName: "Full Name",
+    fullNamePlaceholder: "John Doe",
+    emailAddress: "Email Address",
+    emailPlaceholder: "john@example.com",
+    phoneNumber: "Phone Number",
+    phonePlaceholder: "+91 98765 43210",
+    paymentMethod: "Payment Method",
+    payOnArrival: "Pay upon arrival at destination",
+    bookingSummary: "Booking Summary",
+    service: "Service",
+    priority: "Priority",
+    baseFare: "Base Fare",
+    serviceFee: "Service Fee",
+    tourismTax: "Tourism Tax",
+    totalAmount: "Total Amount",
+    inclTaxes: "Incl. all taxes and fees",
+    termsConsent: "By confirming, you agree to Azure terms",
+    secureCheckout: "Secure SSL Encrypted Checkout",
+    bookingConfirmed: "Booking Confirmed",
+    bookingCreated: "Your appointment has been successfully created.",
+    bookingNo: "Booking No",
+    trackBooking: "Track Booking",
+    backToHome: "Back to Home",
+    continueToDetails: "Continue to Details",
+    confirmSelection: "Confirm Selection",
+    confirmBooking: "Confirm Booking",
+    processing: "Processing...",
+    languageLabel: "Language",
+    english: "EN",
+    bengali: "বাংলা",
+    at: "at",
+  },
+  bn: {
+    backStep: "পেছনের ধাপ",
+    backHome: "হোমে ফিরে যান",
+    step: "ধাপ",
+    selectService: "সেবা নির্বাচন করুন",
+    selectServiceDesc: "আজ আপনার প্রয়োজনীয় ডিজিটাল সেবা নির্বাচন করুন।",
+    booking: "বুকিং",
+    pickTime: "সময় নির্বাচন করুন",
+    selectDate: "তারিখ নির্বাচন করুন",
+    availableSlots: "উপলব্ধ স্লট",
+    morning: "সকাল",
+    afternoon: "বিকেল",
+    selected: "নির্বাচিত",
+    available: "উপলব্ধ",
+    booked: "বুকড",
+    yourChoice: "আপনার পছন্দ",
+    standardVisit: "স্ট্যান্ডার্ড সেন্টার ভিজিট - ৬০ মিনিট",
+    confirmDetails: "তথ্য নিশ্চিত করুন",
+    confirmDetailsDesc: "আপনার তথ্য যাচাই করে যোগাযোগের তথ্য দিন।",
+    guestInformation: "ব্যবহারকারীর তথ্য",
+    fullName: "পূর্ণ নাম",
+    fullNamePlaceholder: "আপনার নাম লিখুন",
+    emailAddress: "ইমেইল ঠিকানা",
+    emailPlaceholder: "আপনার ইমেইল লিখুন",
+    phoneNumber: "ফোন নম্বর",
+    phonePlaceholder: "আপনার মোবাইল নম্বর লিখুন",
+    paymentMethod: "পেমেন্ট পদ্ধতি",
+    payOnArrival: "সেন্টারে এসে পেমেন্ট করুন",
+    bookingSummary: "বুকিং সারাংশ",
+    service: "সেবা",
+    priority: "অগ্রাধিকার",
+    baseFare: "মূল ভাড়া",
+    serviceFee: "সার্ভিস ফি",
+    tourismTax: "ট্যাক্স",
+    totalAmount: "মোট পরিমাণ",
+    inclTaxes: "সব ট্যাক্স ও ফি অন্তর্ভুক্ত",
+    termsConsent: "নিশ্চিত করলে Azure-এর শর্তাবলিতে সম্মতি প্রদান করবেন",
+    secureCheckout: "সুরক্ষিত SSL এনক্রিপ্টেড চেকআউট",
+    bookingConfirmed: "বুকিং নিশ্চিত হয়েছে",
+    bookingCreated: "আপনার অ্যাপয়েন্টমেন্ট সফলভাবে তৈরি হয়েছে।",
+    bookingNo: "বুকিং নম্বর",
+    trackBooking: "বুকিং ট্র্যাক করুন",
+    backToHome: "হোমে ফিরে যান",
+    continueToDetails: "বিস্তারিতে যান",
+    confirmSelection: "নির্বাচন নিশ্চিত করুন",
+    confirmBooking: "বুকিং নিশ্চিত করুন",
+    processing: "প্রসেস হচ্ছে...",
+    languageLabel: "ভাষা",
+    english: "EN",
+    bengali: "বাংলা",
+    at: "সময়",
+  },
+} as const;
+
 export default function AppointmentPage() {
   const router = useRouter();
+  const [language, setLanguage] = useState<Language>("bn");
   const [currentStep, setCurrentStep] = useState(0); // 0=service,1=schedule,2=details,3=success
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
@@ -94,6 +229,9 @@ export default function AppointmentPage() {
   useEffect(() => {
     setMounted(true);
     setSelectedDate(new Date());
+    if (typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("bn")) {
+      setLanguage("bn");
+    }
   }, []);
 
   useEffect(() => {
@@ -183,6 +321,8 @@ export default function AppointmentPage() {
 
   const morningSlots = slots.filter((slot) => Number(slot.start.split(":")[0]) < 12);
   const afternoonSlots = slots.filter((slot) => Number(slot.start.split(":")[0]) >= 12);
+  const t = translations[language];
+  const dateLocale = language === "bn" ? bn : undefined;
 
   const baseFare = Number(selectedService?.price ?? 0);
   const serviceFee = Math.round(baseFare * 0.12 * 100) / 100;
@@ -214,12 +354,37 @@ export default function AppointmentPage() {
 
   const primaryActionLabel =
     currentStep === 0
-      ? "Continue to Details"
+      ? t.continueToDetails
       : currentStep === 1
-        ? "Confirm Selection"
+        ? t.confirmSelection
         : isFinalizing
-          ? "Processing..."
-          : "Confirm Booking";
+          ? t.processing
+          : t.confirmBooking;
+
+  const translateError = (message?: string) => {
+    if (!message) return "";
+    if (language === "bn") {
+      return formErrorTranslations[message] ?? message;
+    }
+    return message;
+  };
+
+  const getServiceLabel = (service: ServiceItem) => {
+    if (language === "bn") {
+      const translated = serviceTranslations[service.name];
+      if (translated) {
+        return translated;
+      }
+    }
+    return { name: service.name, description: service.description };
+  };
+
+  const formatDisplayDate = (date: Date, pattern: string) => {
+    if (dateLocale) {
+      return format(date, pattern, { locale: dateLocale });
+    }
+    return format(date, pattern);
+  };
 
   const handlePrimaryAction = () => {
     if (currentStep === 0) {
@@ -250,13 +415,32 @@ export default function AppointmentPage() {
               type="button"
               onClick={handleTopBack}
               className="inline-flex items-center gap-2 rounded-full border border-[#9ad6e8] bg-white px-4 py-2 text-[#075985] font-black text-sm shadow-[0_10px_24px_-18px_rgba(7,113,145,0.65)] transition-all duration-300 hover:bg-[#f2fbff] hover:-translate-y-0.5 hover:scale-[1.03] hover:shadow-[0_16px_34px_-18px_rgba(7,113,145,0.65)] active:scale-[0.98]"
-              aria-label={currentStep > 0 ? "Go to previous step" : "Go to home page"}
+              aria-label={currentStep > 0 ? t.backStep : t.backHome}
             >
               <ArrowLeft size={16} />
-              {currentStep > 0 ? "Back Step" : "Back Home"}
+              {currentStep > 0 ? t.backStep : t.backHome}
             </button>
-            <div className="rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] font-black text-[#6b7280]">
-              Step {currentStep + 1} / 4
+            <div className="flex items-center gap-2">
+              <div className="rounded-full border border-slate-200 bg-white/90 px-1 py-1 text-[11px] font-black text-[#334155] flex items-center">
+                <span className="px-2 text-[#6b7280]">{t.languageLabel}</span>
+                <button
+                  type="button"
+                  onClick={() => setLanguage("en")}
+                  className={`rounded-full px-2.5 py-1 transition-all ${language === "en" ? "bg-[#0d718f] text-white" : "text-[#4b5563] hover:bg-slate-100"}`}
+                >
+                  {t.english}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLanguage("bn")}
+                  className={`rounded-full px-2.5 py-1 transition-all ${language === "bn" ? "bg-[#0d718f] text-white" : "text-[#4b5563] hover:bg-slate-100"}`}
+                >
+                  {t.bengali}
+                </button>
+              </div>
+              <div className="rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-[11px] font-black text-[#6b7280]">
+                {t.step} {currentStep + 1} / 4
+              </div>
             </div>
           </div>
 
@@ -270,9 +454,9 @@ export default function AppointmentPage() {
                 className="space-y-6"
               >
                 <div className="text-center">
-                  <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827]">Select Service</h1>
+                  <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827]">{t.selectService}</h1>
                   <p className="mt-3 text-sm md:text-base text-[#6b7280]">
-                    Please choose the digital assistance you require today.
+                    {t.selectServiceDesc}
                   </p>
                 </div>
 
@@ -280,6 +464,7 @@ export default function AppointmentPage() {
                   {services.map((service) => {
                     const Icon = resolveIcon(service.icon_name);
                     const selected = selectedService?.id === service.id;
+                    const serviceLabel = getServiceLabel(service);
                     return (
                       <button
                         key={service.id}
@@ -296,8 +481,8 @@ export default function AppointmentPage() {
                           <div className={`w-14 h-14 rounded-full flex items-center justify-center ${selected ? "bg-[#0d718f] text-white" : "bg-[#bfeaf5] text-[#075985]"}`}>
                             <Icon size={24} />
                           </div>
-                          <h3 className="text-xl md:text-2xl font-black text-[#111827]">{service.name}</h3>
-                          <p className="text-[14px] leading-relaxed text-[#374151]">{service.description}</p>
+                          <h3 className="text-xl md:text-2xl font-black text-[#111827]">{serviceLabel.name}</h3>
+                          <p className="text-[14px] leading-relaxed text-[#374151]">{serviceLabel.description}</p>
                           <div className="flex items-center justify-between pt-1">
                             <p className="text-2xl md:text-3xl font-black text-[#075985]">{formatPrice(Number(service.price))}</p>
                             <span className={`w-9 h-9 rounded-full border-2 flex items-center justify-center ${selected ? "border-[#0d718f] bg-[#0d718f] text-white" : "border-[#08b5e9] text-[#08b5e9] bg-white"}`}>
@@ -322,14 +507,14 @@ export default function AppointmentPage() {
                 className="space-y-7"
               >
                 <div>
-                  <p className="text-[12px] tracking-[0.22em] font-black uppercase text-[#075985]">Booking</p>
-                  <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827] mt-2">Pick a Time</h1>
+                  <p className="text-[12px] tracking-[0.22em] font-black uppercase text-[#075985]">{t.booking}</p>
+                  <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827] mt-2">{t.pickTime}</h1>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-xl md:text-2xl font-black text-[#111827]">Select Date</h3>
-                    <p className="text-[#4b5563] text-sm md:text-base mt-1">{format(visibleDates[0], "MMMM yyyy")}</p>
+                    <h3 className="text-xl md:text-2xl font-black text-[#111827]">{t.selectDate}</h3>
+                    <p className="text-[#4b5563] text-sm md:text-base mt-1">{formatDisplayDate(visibleDates[0], "MMMM yyyy")}</p>
                   </div>
                   <div className="flex gap-3">
                     <button
@@ -363,21 +548,21 @@ export default function AppointmentPage() {
                             : "bg-[#e8e7f3] border-transparent text-[#111827]"
                         }`}
                       >
-                        <p className="text-[11px] font-black uppercase">{format(date, "EEE")}</p>
-                        <p className="text-2xl md:text-3xl font-black mt-1">{format(date, "dd")}</p>
+                        <p className="text-[11px] font-black uppercase">{formatDisplayDate(date, "EEE")}</p>
+                        <p className="text-2xl md:text-3xl font-black mt-1">{formatDisplayDate(date, "dd")}</p>
                         <span className={`mt-2 block w-1.5 h-1.5 rounded-full mx-auto ${selected ? "bg-white" : "bg-transparent"}`} />
                       </button>
                     );
                   })}
                 </div>
 
-                <div className="space-y-5">
-                  <h3 className="text-xl md:text-2xl font-black text-[#111827]">Available Slots</h3>
+                <div className="space-y-5 rounded-[2rem] border-2 border-[#d4e4ec] bg-white/85 p-4 md:p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_32px_-24px_rgba(13,113,143,0.35)]">
+                  <h3 className="text-xl md:text-2xl font-black text-[#111827] pb-1 border-b border-[#e2edf2]">{t.availableSlots}</h3>
 
-                  <div className="space-y-3">
+                  <div className="space-y-3 rounded-2xl border border-[#dbe7ee] bg-[#f7fbfd] p-3 md:p-4">
                     <p className="text-[13px] uppercase tracking-[0.2em] font-black text-[#6b7280] flex items-center gap-2">
                       <Clock3 size={14} />
-                      Morning
+                      {t.morning}
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                       {(isLoading ? [] : morningSlots).map((slot) => {
@@ -388,17 +573,17 @@ export default function AppointmentPage() {
                             type="button"
                             onClick={() => slot.isAvailable && setSelectedSlot(slot)}
                             disabled={!slot.isAvailable}
-                            className={`rounded-[2rem] py-4 border-2 transition-all duration-300 ${slot.isAvailable ? "hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985]" : ""} ${
+                            className={`rounded-2xl py-3.5 md:py-4 px-2 border transition-all duration-300 ${slot.isAvailable ? "hover:-translate-y-0.5 active:scale-[0.99]" : ""} ${
                               !slot.isAvailable
-                                ? "bg-[#eff1f6] border-[#eceff5] text-[#9ca3af] line-through"
+                                ? "bg-[#f2f5f8] border-dashed border-[#d6dde6] text-[#9ca3af] line-through"
                                 : selected
-                                  ? "bg-[#d8edf6] border-[#0d718f] text-[#0d718f]"
-                                  : "bg-[#ececf7] border-transparent text-[#111827]"
+                                  ? "bg-[#e7f6fc] border-2 border-[#0d718f] ring-2 ring-[#0d718f]/20 text-[#0d718f] shadow-[0_12px_24px_-16px_rgba(13,113,143,0.55)]"
+                                  : "bg-white border-[#cadbe6] text-[#111827] hover:border-[#6db8d0] hover:shadow-[0_12px_22px_-18px_rgba(13,113,143,0.45)]"
                             }`}
                           >
-                            <p className="text-lg md:text-xl font-black">{to12Hour(slot.start)}</p>
+                            <p className="text-lg md:text-xl font-black">{to12Hour(slot.start, language)}</p>
                             <p className="text-[11px] uppercase tracking-[0.2em] font-black mt-1">
-                              {selected ? "Selected" : slot.isAvailable ? "Available" : "Booked"}
+                              {selected ? t.selected : slot.isAvailable ? t.available : t.booked}
                             </p>
                           </button>
                         );
@@ -406,10 +591,10 @@ export default function AppointmentPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-3 rounded-2xl border border-[#dbe7ee] bg-[#f7fbfd] p-3 md:p-4">
                     <p className="text-[13px] uppercase tracking-[0.2em] font-black text-[#6b7280] flex items-center gap-2">
                       <Clock3 size={14} />
-                      Afternoon
+                      {t.afternoon}
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                       {(isLoading ? [] : afternoonSlots).map((slot) => {
@@ -420,17 +605,17 @@ export default function AppointmentPage() {
                             type="button"
                             onClick={() => slot.isAvailable && setSelectedSlot(slot)}
                             disabled={!slot.isAvailable}
-                            className={`rounded-[2rem] py-4 border-2 transition-all duration-300 ${slot.isAvailable ? "hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985]" : ""} ${
+                            className={`rounded-2xl py-3.5 md:py-4 px-2 border transition-all duration-300 ${slot.isAvailable ? "hover:-translate-y-0.5 active:scale-[0.99]" : ""} ${
                               !slot.isAvailable
-                                ? "bg-[#eff1f6] border-[#eceff5] text-[#9ca3af] line-through"
+                                ? "bg-[#f2f5f8] border-dashed border-[#d6dde6] text-[#9ca3af] line-through"
                                 : selected
-                                  ? "bg-[#d8edf6] border-[#0d718f] text-[#0d718f]"
-                                  : "bg-[#ececf7] border-transparent text-[#111827]"
+                                  ? "bg-[#e7f6fc] border-2 border-[#0d718f] ring-2 ring-[#0d718f]/20 text-[#0d718f] shadow-[0_12px_24px_-16px_rgba(13,113,143,0.55)]"
+                                  : "bg-white border-[#cadbe6] text-[#111827] hover:border-[#6db8d0] hover:shadow-[0_12px_22px_-18px_rgba(13,113,143,0.45)]"
                             }`}
                           >
-                            <p className="text-lg md:text-xl font-black">{to12Hour(slot.start)}</p>
+                            <p className="text-lg md:text-xl font-black">{to12Hour(slot.start, language)}</p>
                             <p className="text-[11px] uppercase tracking-[0.2em] font-black mt-1">
-                              {selected ? "Selected" : slot.isAvailable ? "Available" : "Booked"}
+                              {selected ? t.selected : slot.isAvailable ? t.available : t.booked}
                             </p>
                           </button>
                         );
@@ -441,11 +626,11 @@ export default function AppointmentPage() {
                   {selectedDate && selectedSlot && (
                     <div className="rounded-[2rem] border border-slate-200 bg-white/80 p-5 flex items-center justify-between transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-24px_rgba(9,30,66,0.35)]">
                       <div>
-                        <p className="text-[12px] uppercase tracking-[0.2em] font-black text-[#6b7280]">Your Choice</p>
+                        <p className="text-[12px] uppercase tracking-[0.2em] font-black text-[#6b7280]">{t.yourChoice}</p>
                         <p className="text-base md:text-lg font-black text-[#111827] mt-1">
-                          {format(selectedDate, "EEEE, MMM dd")} at {to12Hour(selectedSlot.start)}
+                          {formatDisplayDate(selectedDate, "EEEE, MMM dd")} {t.at} {to12Hour(selectedSlot.start, language)}
                         </p>
-                        <p className="text-[#374151] mt-1">Standard Shop Visit - 60 min</p>
+                        <p className="text-[#374151] mt-1">{t.standardVisit}</p>
                       </div>
                       <div className="w-14 h-14 rounded-full bg-[#d6eef6] flex items-center justify-center text-[#075985]">
                         <CalendarDays size={24} />
@@ -466,101 +651,88 @@ export default function AppointmentPage() {
                 className="space-y-6"
               >
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827]">Confirm Details</h1>
+                  <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827]">{t.confirmDetails}</h1>
                   <p className="text-[#4b5563] text-sm md:text-base mt-3">
-                    Please review your journey details and provide contact information.
+                    {t.confirmDetailsDesc}
                   </p>
                 </div>
 
-                <div className="rounded-[2.2rem] border border-slate-200 bg-[#ececf8] p-6">
-                  <h3 className="text-[#075985] text-xl md:text-2xl font-black">Guest Information</h3>
+                <div className="rounded-[2.2rem] border-2 border-[#c8dbe7] bg-[#ececf8] p-6 shadow-[0_14px_32px_-24px_rgba(11,118,149,0.45)] ring-1 ring-white/70">
+                  <h3 className="text-[#075985] text-xl md:text-2xl font-black">{t.guestInformation}</h3>
                   <div className="space-y-4 mt-4">
                     <div>
-                      <label className="text-sm font-bold text-[#111827]">Full Name</label>
+                      <label className="text-sm font-bold text-[#111827]">{t.fullName}</label>
                       <input
                         {...register("fullName")}
-                        placeholder="John Doe"
+                        placeholder={t.fullNamePlaceholder}
                         className="mt-2 w-full h-12 rounded-full border border-slate-200 bg-white px-4 text-sm font-semibold text-[#111827] outline-none transition-all duration-200 hover:border-[#7ccfe5] hover:shadow-[0_12px_24px_-20px_rgba(13,113,143,0.55)] focus:border-[#0ea5c9] focus:ring-4 focus:ring-[#0ea5c9]/10"
                       />
-                      {errors.fullName && <p className="text-xs text-red-500 mt-1 font-semibold">{errors.fullName.message}</p>}
+                      {errors.fullName && <p className="text-xs text-red-500 mt-1 font-semibold">{translateError(errors.fullName.message)}</p>}
                     </div>
 
                     <div>
-                      <label className="text-sm font-bold text-[#111827]">Email Address</label>
+                      <label className="text-sm font-bold text-[#111827]">{t.emailAddress}</label>
                       <input
                         {...register("email")}
-                        placeholder="john@example.com"
+                        placeholder={t.emailPlaceholder}
                         className="mt-2 w-full h-12 rounded-full border border-slate-200 bg-white px-4 text-sm font-semibold text-[#111827] outline-none transition-all duration-200 hover:border-[#7ccfe5] hover:shadow-[0_12px_24px_-20px_rgba(13,113,143,0.55)] focus:border-[#0ea5c9] focus:ring-4 focus:ring-[#0ea5c9]/10"
                       />
-                      {errors.email && <p className="text-xs text-red-500 mt-1 font-semibold">{errors.email.message}</p>}
+                      {errors.email && <p className="text-xs text-red-500 mt-1 font-semibold">{translateError(errors.email.message)}</p>}
                     </div>
 
                     <div>
-                      <label className="text-sm font-bold text-[#111827]">Phone Number</label>
+                      <label className="text-sm font-bold text-[#111827]">{t.phoneNumber}</label>
                       <input
                         {...register("phone")}
-                        placeholder="+91 98765 43210"
+                        placeholder={t.phonePlaceholder}
                         className="mt-2 w-full h-12 rounded-full border border-slate-200 bg-white px-4 text-sm font-semibold text-[#111827] outline-none transition-all duration-200 hover:border-[#7ccfe5] hover:shadow-[0_12px_24px_-20px_rgba(13,113,143,0.55)] focus:border-[#0ea5c9] focus:ring-4 focus:ring-[#0ea5c9]/10"
                       />
-                      {errors.phone && <p className="text-xs text-red-500 mt-1 font-semibold">{errors.phone.message}</p>}
+                      {errors.phone && <p className="text-xs text-red-500 mt-1 font-semibold">{translateError(errors.phone.message)}</p>}
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-[2rem] border border-slate-200 bg-[#ececf8] p-5 flex items-center justify-between transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-24px_rgba(9,30,66,0.35)]">
-                  <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-[#075985]">
-                      <Wallet size={18} />
-                    </div>
-                    <div>
-                      <p className="text-lg font-black text-[#111827]">Payment Method</p>
-                      <p className="text-sm text-[#4b5563]">Pay upon arrival at destination</p>
-                    </div>
-                  </div>
-                  <ChevronRight size={20} className="text-[#6b7280]" />
-                </div>
-
-                <div className="rounded-[2.2rem] border-2 border-[#d2d4e8] bg-white/85 p-6 space-y-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_42px_-28px_rgba(9,30,66,0.35)]">
+                <div className="rounded-[2.2rem] border-2 border-[#b9d8e5] bg-white/90 p-6 space-y-5 shadow-[0_16px_36px_-24px_rgba(11,118,149,0.4)] ring-1 ring-[#e7f3f8] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_-26px_rgba(9,30,66,0.35)]">
                   <div className="w-16 h-16 rounded-full bg-[#b9e9f5] mx-auto flex items-center justify-center text-[#075985]">
                     <Store size={30} />
                   </div>
-                  <h3 className="text-center text-2xl md:text-3xl font-black text-[#111827]">Booking Summary</h3>
+                  <h3 className="text-center text-2xl md:text-3xl font-black text-[#111827]">{t.bookingSummary}</h3>
 
                   <div className="space-y-2">
-                    <p className="text-[11px] uppercase tracking-[0.2em] font-black text-[#9ca3af]">Service</p>
+                    <p className="text-[11px] uppercase tracking-[0.2em] font-black text-[#9ca3af]">{t.service}</p>
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-lg md:text-xl font-black text-[#111827]">{selectedService?.name}</p>
+                      <p className="text-lg md:text-xl font-black text-[#111827]">{selectedService ? getServiceLabel(selectedService).name : "-"}</p>
                       <span className="px-3 py-1 rounded-full bg-[#e6f4f8] text-[#075985] text-[11px] font-black uppercase tracking-[0.15em]">
-                        Priority
+                        {t.priority}
                       </span>
                     </div>
                     <p className="text-[#374151] text-sm">
-                      {selectedDate ? format(selectedDate, "MMM dd, yyyy") : "-"} - {selectedSlot ? to12Hour(selectedSlot.start) : "-"}
+                      {selectedDate ? formatDisplayDate(selectedDate, "MMM dd, yyyy") : "-"} - {selectedSlot ? to12Hour(selectedSlot.start, language) : "-"}
                     </p>
                   </div>
 
                   <div className="border-t border-slate-200 pt-4 space-y-2 text-sm md:text-base text-[#111827]">
-                    <div className="flex justify-between"><span>Base Fare</span><span>{formatPrice(baseFare)}</span></div>
-                    <div className="flex justify-between"><span>Service Fee</span><span>{formatPrice(serviceFee)}</span></div>
-                    <div className="flex justify-between"><span>Tourism Tax</span><span>{formatPrice(tax)}</span></div>
+                    <div className="flex justify-between"><span>{t.baseFare}</span><span>{formatPrice(baseFare)}</span></div>
+                    <div className="flex justify-between"><span>{t.serviceFee}</span><span>{formatPrice(serviceFee)}</span></div>
+                    <div className="flex justify-between"><span>{t.tourismTax}</span><span>{formatPrice(tax)}</span></div>
                   </div>
 
                   <div className="border-t border-slate-200 pt-4 flex items-end justify-between">
                     <div>
-                      <p className="text-base md:text-lg font-black text-[#111827]">Total Amount</p>
-                      <p className="text-xs text-[#9ca3af]">Incl. all taxes and fees</p>
+                      <p className="text-base md:text-lg font-black text-[#111827]">{t.totalAmount}</p>
+                      <p className="text-xs text-[#9ca3af]">{t.inclTaxes}</p>
                     </div>
                     <p className="text-2xl md:text-3xl font-black text-[#075985]">{formatPrice(total)}</p>
                   </div>
 
                   <p className="text-center text-[11px] uppercase tracking-[0.2em] font-black text-[#9ca3af]">
-                    By confirming, you agree to Azure terms
+                    {t.termsConsent}
                   </p>
                 </div>
 
                 <div className="flex items-center justify-center gap-2 text-[#075985] text-sm md:text-base font-bold pb-2">
                   <ShieldCheck size={18} />
-                  <span>Secure SSL Encrypted Checkout</span>
+                  <span>{t.secureCheckout}</span>
                 </div>
               </motion.section>
             )}
@@ -575,25 +747,25 @@ export default function AppointmentPage() {
                 <div className="w-24 h-24 rounded-full bg-[#c9eef8] border border-[#9edcf0] flex items-center justify-center mx-auto">
                   <CheckCircle2 size={46} className="text-[#0d718f]" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827]">Booking Confirmed</h1>
-                <p className="text-[#4b5563] text-sm md:text-base">Your appointment has been successfully created.</p>
+                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#111827]">{t.bookingConfirmed}</h1>
+                <p className="text-[#4b5563] text-sm md:text-base">{t.bookingCreated}</p>
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 max-w-sm mx-auto text-left space-y-2">
-                  <p className="text-[12px] uppercase tracking-[0.2em] font-black text-[#6b7280]">Booking No</p>
+                  <p className="text-[12px] uppercase tracking-[0.2em] font-black text-[#6b7280]">{t.bookingNo}</p>
                   <p className="text-xl md:text-2xl font-black text-[#075985]">{bookingId}</p>
-                  <p className="text-sm text-[#374151]">{selectedService?.name}</p>
+                  <p className="text-sm text-[#374151]">{selectedService ? getServiceLabel(selectedService).name : "-"}</p>
                   <p className="text-sm text-[#374151]">
-                    {selectedDate ? format(selectedDate, "EEE, MMM dd") : ""} - {selectedSlot ? to12Hour(selectedSlot.start) : ""}
+                    {selectedDate ? formatDisplayDate(selectedDate, "EEE, MMM dd") : ""} - {selectedSlot ? to12Hour(selectedSlot.start, language) : ""}
                   </p>
                 </div>
                 <div className="space-y-3 pt-2">
                   <Link href="/track" className="block">
                     <button type="button" className="w-full rounded-full py-3.5 md:py-4 bg-gradient-to-r from-[#0b7695] to-[#10bde8] text-white font-black text-base md:text-lg transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]">
-                      Track Booking
+                      {t.trackBooking}
                     </button>
                   </Link>
                   <Link href="/" className="block">
                     <button type="button" className="w-full rounded-full py-3.5 md:py-4 border-2 border-[#0b7695] text-[#0b7695] font-black text-base md:text-lg bg-white/70 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] hover:bg-white">
-                      Back to Home
+                      {t.backToHome}
                     </button>
                   </Link>
                 </div>
